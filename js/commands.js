@@ -13,7 +13,7 @@ const COMMANDS = [
   {
     cmd: '/bili',
     name: '哔哩哔哩',
-    desc: '搜索 B 站弹幕视频与番剧',
+    desc: '',
     icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="14" rx="4"/><path d="m8 2 3 4M16 2l-3 4"/><circle cx="8" cy="13" r="1" fill="currentColor"/><circle cx="16" cy="13" r="1" fill="currentColor"/></svg>`,
     action: (query) => {
       const q = encodeURIComponent(query.trim());
@@ -21,23 +21,13 @@ const COMMANDS = [
     }
   },
   {
-    cmd: '/zhihu',
-    name: '知乎搜索',
-    desc: '搜索知乎问答与热门讨论',
-    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="#0066FF"><path d="M5.5 4h13a1.5 1.5 0 0 1 1.5 1.5v13a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5v-13A1.5 1.5 0 0 1 5.5 4zm4.2 3.8H8.3v1.8h1.4v4.5H8v1.8h3.8V14h-1v-4.4h1.7V7.8H9.7zm4.8 0h-1.8v8.1h1.8V7.8zm1.6 1.8h1.8v4.5h-1.8V9.6z"/></svg>`,
+    cmd: '/yt',
+    name: 'YouTube',
+    desc: '',
+    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="#FF0000"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>`,
     action: (query) => {
       const q = encodeURIComponent(query.trim());
-      window.location.href = q ? `https://www.zhihu.com/search?type=content&q=${q}` : 'https://www.zhihu.com';
-    }
-  },
-  {
-    cmd: '/juejin',
-    name: '稀土掘金',
-    desc: '搜索前沿技术干货与掘金文章',
-    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="#1E80FF"><path d="M12 2 4 8.5l2 1.6L12 5.2l6 4.9 2-1.6L12 2zm0 6.4L7.5 12l1.6 1.3 2.9-2.3 2.9 2.3 1.6-1.3L12 8.4zm0 6.4-1.6 1.3 1.6 1.3 1.6-1.3-1.6-1.3zM12 18l-6-4.9-2 1.6L12 22l8-7.3-2-1.6L12 18z"/></svg>`,
-    action: (query) => {
-      const q = encodeURIComponent(query.trim());
-      window.location.href = q ? `https://juejin.cn/search?query=${q}` : 'https://juejin.cn';
+      window.location.href = q ? `https://www.youtube.com/results?search_query=${q}` : 'https://www.youtube.com';
     }
   },
   {
@@ -48,26 +38,6 @@ const COMMANDS = [
     action: (query) => {
       const q = encodeURIComponent(query.trim());
       window.location.href = q ? `https://translate.google.com/?sl=auto&tl=zh-CN&text=${q}&op=translate` : 'https://translate.google.com';
-    }
-  },
-  {
-    cmd: '/map',
-    name: '高德地图',
-    desc: '在线地点检索与路线导航',
-    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>`,
-    action: (query) => {
-      const q = encodeURIComponent(query.trim());
-      window.location.href = q ? `https://www.amap.com/search?query=${q}` : 'https://www.amap.com';
-    }
-  },
-  {
-    cmd: '/yt',
-    name: 'YouTube',
-    desc: '全球海量视频与频道搜索',
-    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="#FF0000"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>`,
-    action: (query) => {
-      const q = encodeURIComponent(query.trim());
-      window.location.href = q ? `https://www.youtube.com/results?search_query=${q}` : 'https://www.youtube.com';
     }
   },
   {

@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="css/newtab.css">
 </head>
 <body>
-  <!-- 背景中心暖调柔光晕 (Ambient Glow) -->
+  <!-- 背景光晕 -->
   <div class="ambient-glow-wrapper" id="ambientGlow"></div>
 
   <!-- 右下角主题与个性化设置按钮 -->
@@ -24,7 +24,7 @@
 
   <!-- 视口核心主容器 -->
   <main class="main-viewport">
-    <!-- 居中几何流光 Logo -->
+    <!-- 居中Logo -->
     <div class="brand-hero">
       <svg class="brand-symbol" id="brandFlower" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
         <defs>
@@ -41,7 +41,7 @@
             <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="var(--accent-color, #ff6e26)" flood-opacity="0.3" id="flowerDropShadow" />
           </filter>
         </defs>
-        <!-- 4瓣几何交叉圆角条条 -->
+        <!-- 花朵 -->
         <g filter="url(#subtleShadow)">
           <rect x="22" y="38" width="56" height="24" rx="12" transform="rotate(-45 50 50)" fill="url(#brandGrad)" />
           <rect x="22" y="38" width="56" height="24" rx="12" transform="rotate(45 50 50)" fill="url(#brandGrad2)" />
@@ -50,7 +50,7 @@
       </svg>
     </div>
 
-    <!-- 居中全能输入与提示卡片 -->
+    <!-- 居中输入与提示卡片 -->
     <div class="omnibar-card-container">
       <div class="omnibar-card" id="omnibarCard">
         <!-- 上层输入区 -->
@@ -107,7 +107,7 @@
         <ul class="palette-list" id="paletteList"></ul>
       </div>
 
-      <!-- 搜索建议与历史记录浮层 (Search Suggestions & History Popover) -->
+      <!-- 搜索建议与历史记录浮层 -->
       <div class="popover-card search-suggestions-popover hidden" id="searchSuggestionsPopover">
         <div class="suggestions-header" id="suggestionsHeader">
           <span id="suggestionsHeaderTitle">搜索建议与历史</span>
@@ -116,7 +116,7 @@
         <ul class="suggestions-list" id="suggestionsList"></ul>
       </div>
 
-      <!-- 搜索引擎切换下拉菜单 (Engine Menu Popover) -->
+      <!-- 搜索引擎切换下拉菜单 -->
       <div class="popover-card engine-menu-popover hidden" id="engineMenu">
         <div class="engine-option" data-engine="google">
           <div class="engine-option-left">
@@ -164,7 +164,7 @@
         </div>
       </div>
 
-      <!-- Bento 自定义常用捷径面板 (Bento Popover) -->
+      <!-- 自定义常用捷径面板 -->
       <div class="popover-card bento-popover hidden" id="bentoMenu">
         <div class="bento-header">
           <span class="bento-title">常用捷径与站点</span>
@@ -181,7 +181,7 @@
           </div>
         </div>
 
-        <!-- 常用站点动态网格（默认为空） -->
+        <!-- 常用站点动态网格 -->
         <div class="bento-grid" id="bentoGrid"></div>
       </div>
     </div>
@@ -190,7 +190,7 @@
 
 
 
-  <!-- 右下角主题设置面板 (Theme Settings Popover) -->
+  <!-- 右下角主题设置面板 -->
   <div class="theme-settings-popover hidden" id="themeSettings">
     <div>
       <div class="settings-group-title">预设经典配色</div>

@@ -1,5 +1,5 @@
 :root {
-  /* 基础配色 - 晨曦暖橙 (默认主题) */
+  /* 基础配色 */
   --bg-base: #f5f6f8;
   --bg-surface: #ffffff;
   --bg-surface-elevated: #ffffff;
@@ -32,7 +32,7 @@
   --font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, "Helvetica Neue", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
 }
 
-/* 深色模式 / 暗夜黑主题 */
+/* 深色模式 */
 [data-theme-mode="dark"] {
   --bg-base: #111215;
   --bg-surface: #1a1c22;
@@ -83,7 +83,7 @@ body {
 }
 
 
-/* 中心柔和弥散光晕 (Ambient Radial Glow) */
+/* 中心光晕 */
 .ambient-glow-wrapper {
   position: fixed;
   top: 36%;
@@ -482,7 +482,7 @@ body {
   border-radius: 4px;
 }
 
-/* 斜杠妙招面板 (Slash Command Palette) */
+/* / 面板 */
 .slash-palette-popover {
   left: 0;
   right: 0;
@@ -643,7 +643,7 @@ body {
   justify-content: center;
 }
 
-/* Bento 常用捷径应用网格卡片 */
+/* 常用捷径应用网格卡片 */
 .bento-popover {
   left: 20px;
   top: calc(100% + 8px);
@@ -942,7 +942,7 @@ body {
   transform: scale(1.1);
 }
 
-/* 专属大圆角无极调色器控件样式 */
+/* 无极调色器控件样式 */
 .custom-color-section {
   display: flex;
   flex-direction: column;
@@ -975,7 +975,7 @@ body {
   box-shadow: var(--shadow-sm);
 }
 
-/* 2D 饱和度/明度拾色区域 (大圆角) */
+/* 2D 饱和度/明度拾色区域*/
 .picker-sv-box {
   position: relative;
   width: 100%;
@@ -1051,7 +1051,7 @@ body {
   flex-shrink: 0;
 }
 
-/* 1D 色相胶囊滑条 (大圆角药丸) */
+/* 1D 色相胶囊滑条 */
 .picker-hue-slider {
   position: relative;
   flex: 1;
