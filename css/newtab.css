@@ -960,88 +960,170 @@ body {
   transform: scale(1.1);
 }
 
-/* 无极调色板控件样式 */
+/* 专属大圆角无极调色器控件样式 */
 .custom-color-section {
   display: flex;
   flex-direction: column;
-  padding-top: 4px;
+  gap: 10px;
+  padding-top: 2px;
 }
 
-.custom-color-row {
+.custom-color-header {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 8px 10px;
-  background: var(--bg-surface);
-  border-radius: 12px;
-  border: 1px solid var(--border-subtle);
-}
-
-.custom-color-picker-label {
-  position: relative;
-  width: 32px;
-  height: 32px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.custom-color-native-input {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  cursor: pointer;
-  padding: 0;
-  border: none;
-}
-
-.custom-color-ring {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  padding: 3px;
-  background: conic-gradient(from 0deg, #ff0000, #ff7f00, #ffff00, #00ff00, #00ffff, #0000ff, #8b00ff, #ff0000);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: var(--shadow-sm);
-  transition: transform 0.2s ease;
-}
-
-.custom-color-picker-label:hover .custom-color-ring {
-  transform: scale(1.1);
-}
-
-.custom-color-thumb {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  border: 2px solid #ffffff;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-  transition: background-color 0.15s ease;
-}
-
-.custom-color-info {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+  justify-content: space-between;
 }
 
 .custom-color-hex {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-primary);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent-color);
   letter-spacing: 0.5px;
 }
 
-.custom-color-hint {
+.custom-picker-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  box-shadow: var(--shadow-sm);
+}
+
+/* 2D 饱和度/明度拾色区域 (大圆角) */
+.picker-sv-box {
+  position: relative;
+  width: 100%;
+  height: 120px;
+  border-radius: 12px;
+  cursor: crosshair;
+  overflow: hidden;
+  user-select: none;
+  background-color: #ff6e26;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+}
+
+.picker-sv-white {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, #ffffff, transparent);
+  pointer-events: none;
+}
+
+.picker-sv-black {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, #000000, transparent);
+  pointer-events: none;
+}
+
+.picker-sv-cursor {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.6), inset 0 0 2px rgba(0, 0, 0, 0.4);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  left: 80%;
+  top: 20%;
+}
+
+/* 中间控制行：吸管 + 颜色预览 + 色相滑条 */
+.picker-controls-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.picker-eyedropper-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+  background: var(--btn-icon-bg);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+
+.picker-eyedropper-btn:hover {
+  background: var(--btn-icon-hover);
+  color: var(--text-primary);
+}
+
+.picker-color-preview {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid var(--bg-surface-elevated);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  flex-shrink: 0;
+}
+
+/* 1D 色相胶囊滑条 (大圆角药丸) */
+.picker-hue-slider {
+  position: relative;
+  flex: 1;
+  height: 14px;
+  border-radius: 9999px;
+  background: linear-gradient(to right, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
+  cursor: pointer;
+  user-select: none;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+.picker-hue-thumb {
+  position: absolute;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2px solid #ffffff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  left: 0%;
+}
+
+/* HEX 输入微调行 */
+.picker-hex-input-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--btn-icon-hover);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 4px 10px;
+}
+
+.picker-hex-symbol {
   font-size: 11px;
+  font-weight: 700;
   color: var(--text-tertiary);
+  letter-spacing: 0.5px;
+}
+
+.picker-hex-input {
+  background: transparent;
+  border: none;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-align: right;
+  width: 80px;
+  outline: none;
+  text-transform: uppercase;
 }
 
 .settings-switch-row {

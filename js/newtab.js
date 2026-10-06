@@ -589,15 +589,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   });
 
-  const customColorInput = document.getElementById('customColorInput');
-  if (customColorInput) {
-    customColorInput.addEventListener('input', (e) => {
-      ThemeManager.applyAccent(e.target.value, false);
-    });
-    customColorInput.addEventListener('change', (e) => {
-      ThemeManager.applyAccent(e.target.value, true);
-    });
-  }
+
 
   if (darkModeSwitch) {
     darkModeSwitch.checked = ThemeManager.currentMode === 'dark';

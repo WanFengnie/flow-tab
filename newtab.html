@@ -229,19 +229,40 @@
       </div>
     </div>
 
-    <!-- 无极调色板模块 -->
+    <!-- 专属大圆角无极调色板模块 -->
     <div class="custom-color-section">
-      <div class="settings-group-title">无极调色板</div>
-      <div class="custom-color-row">
-        <label class="custom-color-picker-label" title="点击打开全色谱无极调色盘">
-          <input type="color" id="customColorInput" class="custom-color-native-input" value="#ff6e26">
-          <div class="custom-color-ring" id="customColorRing">
-            <span class="custom-color-thumb" id="customColorThumb" style="background: #ff6e26;"></span>
+      <div class="custom-color-header">
+        <div class="settings-group-title" style="margin-bottom: 0;">无极调色板</div>
+        <span class="custom-color-hex" id="customColorHexTag">#FF6E26</span>
+      </div>
+
+      <div class="custom-picker-container" id="customPickerContainer">
+        <!-- 2D 饱和度/明度大圆角拾色板 -->
+        <div class="picker-sv-box" id="pickerSvBox">
+          <div class="picker-sv-white"></div>
+          <div class="picker-sv-black"></div>
+          <div class="picker-sv-cursor" id="pickerSvCursor"></div>
+        </div>
+
+        <!-- 中间控制条：吸管 + 颜色预览 + 1D 色相胶囊滑条 -->
+        <div class="picker-controls-row">
+          <button class="picker-eyedropper-btn" id="pickerEyedropperBtn" title="屏幕拾色吸管" aria-label="屏幕拾色">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m19 11-8-8-8.6 8.6a2 2 0 0 0 0 2.8l5.2 5.2c.8.8 2 .8 2.8 0L19 11Z"/>
+              <path d="m5 2 5 5"/>
+              <path d="m2 13 3 3"/>
+            </svg>
+          </button>
+          <div class="picker-color-preview" id="pickerColorPreview" style="background: #ff6e26;"></div>
+          <div class="picker-hue-slider" id="pickerHueSlider" title="滑动调节色相">
+            <div class="picker-hue-thumb" id="pickerHueThumb"></div>
           </div>
-        </label>
-        <div class="custom-color-info">
-          <span class="custom-color-hex" id="customColorHexTag">#FF6E26</span>
-          <span class="custom-color-hint">点击圆盘可自由选取全光谱色彩</span>
+        </div>
+
+        <!-- HEX 文本输入微调框 -->
+        <div class="picker-hex-input-row">
+          <span class="picker-hex-symbol">HEX</span>
+          <input type="text" id="customHexInput" class="picker-hex-input" maxlength="7" spellcheck="false" value="#FF6E26">
         </div>
       </div>
     </div>
