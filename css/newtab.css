@@ -60,42 +60,7 @@
   --send-btn-inactive-color: #5d6373;
 }
 
-/* 主题色彩预设 */
-[data-accent="purple"] {
-  --accent-color: #8b5cf6;
-  --accent-hover: #7c3aed;
-  --accent-light: #f5f3ff;
-  --accent-glow: rgba(139, 92, 246, 0.24);
-  --accent-glow-outer: rgba(167, 139, 250, 0.09);
-  --border-focus: rgba(139, 92, 246, 0.4);
-}
 
-[data-accent="emerald"] {
-  --accent-color: #10b981;
-  --accent-hover: #059669;
-  --accent-light: #ecfdf5;
-  --accent-glow: rgba(16, 185, 129, 0.24);
-  --accent-glow-outer: rgba(52, 211, 153, 0.08);
-  --border-focus: rgba(16, 185, 129, 0.4);
-}
-
-[data-accent="blue"] {
-  --accent-color: #3b82f6;
-  --accent-hover: #2563eb;
-  --accent-light: #eff6ff;
-  --accent-glow: rgba(59, 130, 246, 0.24);
-  --accent-glow-outer: rgba(96, 165, 250, 0.08);
-  --border-focus: rgba(59, 130, 246, 0.4);
-}
-
-[data-accent="rose"] {
-  --accent-color: #f43f5e;
-  --accent-hover: #e11d48;
-  --accent-light: #fff1f2;
-  --accent-glow: rgba(244, 63, 94, 0.24);
-  --accent-glow-outer: rgba(251, 113, 133, 0.08);
-  --border-focus: rgba(244, 63, 94, 0.4);
-}
 
 * {
   margin: 0;
@@ -450,10 +415,13 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--accent-light);
+  background: var(--btn-icon-bg);
+  border: 1px solid var(--border-subtle);
   color: var(--accent-color);
   font-size: 14px;
   flex-shrink: 0;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
 }
 
 .palette-info {
@@ -475,10 +443,15 @@ body {
   font-size: 11px;
   color: var(--accent-color);
   background: var(--accent-light);
+  border: 1px solid transparent;
   padding: 1px 6px;
   border-radius: 4px;
   font-weight: 600;
   font-family: monospace;
+}
+
+[data-theme-mode="dark"] .palette-cmd-tag {
+  border-color: var(--border-subtle);
 }
 
 .palette-desc {
@@ -524,6 +497,11 @@ body {
   background: var(--accent-light);
   color: var(--accent-color);
   font-weight: 600;
+  border: 1px solid transparent;
+}
+
+[data-theme-mode="dark"] .engine-option.active {
+  border-color: var(--border-focus);
 }
 
 .engine-option-left {
@@ -563,7 +541,7 @@ body {
 }
 
 .bento-add-btn {
-  border: none;
+  border: 1px solid transparent;
   background: var(--accent-light);
   color: var(--accent-color);
   font-size: 11px;
@@ -572,6 +550,10 @@ body {
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.15s ease;
+}
+
+[data-theme-mode="dark"] .bento-add-btn {
+  border-color: var(--border-subtle);
 }
 
 .bento-add-btn:hover {

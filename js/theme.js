@@ -53,8 +53,8 @@ const ThemeManager = {
     this.currentMode = await StorageService.get('theme_mode', 'light');
     this.defaultEngine = await StorageService.get('default_engine', 'google');
 
-    this.applyAccent(this.currentAccent, false);
     this.applyMode(this.currentMode);
+    this.applyAccent(this.currentAccent, false);
   },
 
   applyAccent(colorValue, persist = true) {
@@ -68,6 +68,7 @@ const ThemeManager = {
     this.currentAccent = hex;
 
     const rgb = hexToRgb(hex);
+    const isDark = this.currentMode === 'dark';
     const hoverColor = adjustHex(hex, -12);
     const stop1 = adjustHex(hex, 26);
     const stop2 = hex;
@@ -76,10 +77,17 @@ const ThemeManager = {
     const root = document.documentElement;
     root.style.setProperty('--accent-color', hex);
     root.style.setProperty('--accent-hover', hoverColor);
-    root.style.setProperty('--accent-light', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.12)`);
-    root.style.setProperty('--accent-glow', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.28)`);
-    root.style.setProperty('--accent-glow-outer', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.08)`);
-    root.style.setProperty('--border-focus', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.45)`);
+
+    // 动态模式透明度：深色模式使用深邃微光半透明，彻底杜绝浅白块
+    const lightAlpha = isDark ? 0.18 : 0.09;
+    const glowAlpha = isDark ? 0.30 : 0.22;
+    const glowOuterAlpha = isDark ? 0.06 : 0.08;
+    const focusAlpha = isDark ? 0.50 : 0.40;
+
+    root.style.setProperty('--accent-light', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${lightAlpha})`);
+    root.style.setProperty('--accent-glow', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${glowAlpha})`);
+    root.style.setProperty('--accent-glow-outer', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${glowOuterAlpha})`);
+    root.style.setProperty('--border-focus', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${focusAlpha})`);
 
     root.style.setProperty('--flower-stop-1', stop1);
     root.style.setProperty('--flower-stop-2', stop2);
@@ -130,6 +138,11 @@ const ThemeManager = {
       document.documentElement.removeAttribute('data-theme-mode');
     }
     StorageService.set('theme_mode', mode);
+
+    // 模式切换时自动根据深浅对比度重算当前主题色的微光与透明度变量
+    if (this.currentAccent) {
+      this.applyAccent(this.currentAccent, false);
+    }
   },
 
   updateActiveColorDot(hex) {
