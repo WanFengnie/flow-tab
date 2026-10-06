@@ -21,13 +21,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const bentoSaveBtn = document.getElementById('bentoSaveBtn');
   const bentoCancelBtn = document.getElementById('bentoCancelBtn');
   
-  // 侧边栏抽屉相关
-  const sidebarDrawer = document.getElementById('sidebarDrawer');
-  const drawerBackdrop = document.getElementById('drawerBackdrop');
-  const drawerCloseBtn = document.getElementById('drawerCloseBtn');
-  const drawerBookmarksList = document.getElementById('drawerBookmarksList');
-  const drawerHistoryList = document.getElementById('drawerHistoryList');
-  const memoTextarea = document.getElementById('memoTextarea');
+
 
   // 主题设置相关
   const themeToggleBtn = document.getElementById('themeToggleBtn');
@@ -210,7 +204,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       } else {
         hideSuggestions();
       }
-    }, 120);
+    }, 50);
   }
 
   function renderSuggestionsList() {
@@ -644,155 +638,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     themeSettings.classList.add('hidden');
   });
 
-  // 9. 左侧抽屉控制 (Drawer)
-  function openDrawer(tabName = 'bookmarks', filter = '') {
-    sidebarDrawer.classList.add('open');
-    drawerBackdrop.classList.add('open');
-    switchDrawerTab(tabName);
-    if (tabName === 'bookmarks') loadBookmarks(filter);
-    if (tabName === 'history') loadHistory(filter);
-  }
 
-  function closeDrawer() {
-    sidebarDrawer.classList.remove('open');
-    drawerBackdrop.classList.remove('open');
-  }
-
-  drawerCloseBtn.addEventListener('click', closeDrawer);
-  drawerBackdrop.addEventListener('click', closeDrawer);
-
-  window.addEventListener('open-drawer', (e) => {
-    const { tab, filter, noteText } = e.detail;
-    openDrawer(tab || 'bookmarks', filter);
-    if (noteText && memoTextarea) {
-      memoTextarea.value += (memoTextarea.value ? '\n' : '') + noteText;
-      StorageService.set('user_memo', memoTextarea.value);
-    }
-  });
-
-  // 抽屉 Tab 切换
-  function switchDrawerTab(tabName) {
-    document.querySelectorAll('.drawer-tab-btn').forEach(btn => {
-      if (btn.getAttribute('data-tab') === tabName) {
-        btn.classList.add('active');
-      } else {
-        btn.classList.remove('active');
-      }
-    });
-
-    document.querySelectorAll('.drawer-tab-pane').forEach(pane => {
-      if (pane.id === `tabPane-${tabName}`) {
-        pane.classList.remove('hidden');
-      } else {
-        pane.classList.add('hidden');
-      }
-    });
-  }
-
-  document.querySelectorAll('.drawer-tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const tab = btn.getAttribute('data-tab');
-      switchDrawerTab(tab);
-      if (tab === 'bookmarks') loadBookmarks();
-      if (tab === 'history') loadHistory();
-    });
-  });
-
-  // 书签加载
-  function loadBookmarks(filter = '') {
-    drawerBookmarksList.innerHTML = '';
-    if (typeof chrome !== 'undefined' && chrome.bookmarks && chrome.bookmarks.getTree) {
-      chrome.bookmarks.getTree((treeNodes) => {
-        const bookmarks = [];
-        function traverse(nodes) {
-          for (const node of nodes) {
-            if (node.url) {
-              bookmarks.push(node);
-            }
-            if (node.children) {
-              traverse(node.children);
-            }
-          }
-        }
-        traverse(treeNodes);
-
-        const list = filter 
-          ? bookmarks.filter(b => b.title.toLowerCase().includes(filter.toLowerCase()) || b.url.toLowerCase().includes(filter.toLowerCase()))
-          : bookmarks.slice(0, 30);
-
-        if (list.length === 0) {
-          drawerBookmarksList.innerHTML = `<div style="text-align:center; color:var(--text-tertiary); padding:20px;">未找到匹配书签</div>`;
-          return;
-        }
-
-        list.forEach(bm => {
-          const a = document.createElement('a');
-          a.className = 'drawer-list-item';
-          a.href = bm.url;
-          a.target = '_blank';
-          a.innerHTML = `
-            <span style="opacity:0.7;">★</span>
-            <span class="drawer-item-title">${bm.title || bm.url}</span>
-          `;
-          drawerBookmarksList.appendChild(a);
-        });
-      });
-    } else {
-      // 演示模拟常用书签
-      const mockBookmarks = [
-        { title: 'GitHub - 开源宝库', url: 'https://github.com' },
-        { title: '哔哩哔哩 - 弹幕视频网', url: 'https://www.bilibili.com' },
-        { title: '掘金 - 开发者社区', url: 'https://juejin.cn' },
-        { title: 'V2EX - 创意工作者', url: 'https://v2ex.com' },
-        { title: '知乎 - 有问题就会有答案', url: 'https://www.zhihu.com' },
-        { title: 'YouTube - 全球视频', url: 'https://www.youtube.com' }
-      ];
-      mockBookmarks.forEach(bm => {
-        const a = document.createElement('a');
-        a.className = 'drawer-list-item';
-        a.href = bm.url;
-        a.innerHTML = `<span>★</span><span class="drawer-item-title">${bm.title}</span>`;
-        drawerBookmarksList.appendChild(a);
-      });
-    }
-  }
-
-  // 历史记录加载
-  function loadHistory(filter = '') {
-    drawerHistoryList.innerHTML = '';
-    if (typeof chrome !== 'undefined' && chrome.history && chrome.history.search) {
-      chrome.history.search({ text: filter, maxResults: 30 }, (items) => {
-        if (!items || items.length === 0) {
-          drawerHistoryList.innerHTML = `<div style="text-align:center; color:var(--text-tertiary); padding:20px;">暂无历史记录</div>`;
-          return;
-        }
-        items.forEach(h => {
-          const a = document.createElement('a');
-          a.className = 'drawer-list-item';
-          a.href = h.url;
-          a.target = '_blank';
-          a.innerHTML = `
-            <span style="opacity:0.6;">⏱</span>
-            <span class="drawer-item-title">${h.title || h.url}</span>
-          `;
-          drawerHistoryList.appendChild(a);
-        });
-      });
-    } else {
-      drawerHistoryList.innerHTML = `<div style="text-align:center; color:var(--text-tertiary); padding:20px;">安装到 Chrome 浏览器后自动展示最近访问历史</div>`;
-    }
-  }
-
-  // 便签保存
-  if (memoTextarea) {
-    StorageService.get('user_memo', '').then(memo => {
-      memoTextarea.value = memo || '';
-    });
-
-    memoTextarea.addEventListener('input', () => {
-      StorageService.set('user_memo', memoTextarea.value);
-    });
-  }
 
   // 10. 右下角个性化与主题面板
   themeToggleBtn.addEventListener('click', (e) => {
