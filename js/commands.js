@@ -13,7 +13,7 @@ const COMMANDS = [
   {
     cmd: '/bili',
     name: '哔哩哔哩',
-    desc: '直达 B 站主页或搜索视频、番剧、UP 主',
+    desc: '',
     icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="14" rx="4"/><path d="m8 2 3 4M16 2l-3 4"/><circle cx="8" cy="13" r="1" fill="currentColor"/><circle cx="16" cy="13" r="1" fill="currentColor"/></svg>`,
     action: (query) => {
       const q = encodeURIComponent(query.trim());
@@ -21,39 +21,9 @@ const COMMANDS = [
     }
   },
   {
-    cmd: '/zhihu',
-    name: '知乎',
-    desc: '直达知乎或搜索深度回答、想法与文章',
-    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
-    action: (query) => {
-      const q = encodeURIComponent(query.trim());
-      window.location.href = q ? `https://www.zhihu.com/search?type=content&q=${q}` : 'https://www.zhihu.com';
-    }
-  },
-  {
-    cmd: '/juejin',
-    name: '稀土掘金',
-    desc: '搜索优质技术文章、代码片段与开发者热点',
-    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 10 6-10 6L2 8l10-6z"/><path d="m2 13 10 6 10-6"/></svg>`,
-    action: (query) => {
-      const q = encodeURIComponent(query.trim());
-      window.location.href = q ? `https://juejin.cn/search?query=${q}` : 'https://juejin.cn';
-    }
-  },
-  {
-    cmd: '/map',
-    name: '高德地图',
-    desc: '精准查询地理位置、周边生活与行车路线',
-    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>`,
-    action: (query) => {
-      const q = encodeURIComponent(query.trim());
-      window.location.href = q ? `https://ditu.amap.com/search?query=${q}` : 'https://ditu.amap.com';
-    }
-  },
-  {
     cmd: '/yt',
     name: 'YouTube',
-    desc: '全球海量高清视频与频道检索',
+    desc: '',
     icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="#FF0000"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>`,
     action: (query) => {
       const q = encodeURIComponent(query.trim());
