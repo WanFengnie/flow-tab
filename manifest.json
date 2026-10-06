@@ -16,5 +16,10 @@
     "bookmarks",
     "history",
     "topSites"
+  ],
+  "host_permissions": [
+    "https://suggestion.baidu.com/*",
+    "https://api.bing.com/*",
+    "https://suggestqueries.google.com/*"
   ]
 }

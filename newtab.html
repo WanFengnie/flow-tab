@@ -107,6 +107,15 @@
         <ul class="palette-list" id="paletteList"></ul>
       </div>
 
+      <!-- 搜索建议与历史记录浮层 (Search Suggestions & History Popover) -->
+      <div class="popover-card search-suggestions-popover hidden" id="searchSuggestionsPopover">
+        <div class="suggestions-header" id="suggestionsHeader">
+          <span id="suggestionsHeaderTitle">搜索建议与历史</span>
+          <span style="font-size: 11px; font-weight: normal;">支持 ↑ ↓ 键切换</span>
+        </div>
+        <ul class="suggestions-list" id="suggestionsList"></ul>
+      </div>
+
       <!-- 搜索引擎切换下拉菜单 (Engine Menu Popover) -->
       <div class="popover-card engine-menu-popover hidden" id="engineMenu">
         <div class="engine-option" data-engine="google">
@@ -265,6 +274,11 @@
           <input type="text" id="customHexInput" class="picker-hex-input" maxlength="7" spellcheck="false" value="#FF6E26">
         </div>
       </div>
+    </div>
+
+    <div class="settings-switch-row">
+      <span>搜索联想与历史记录</span>
+      <input type="checkbox" id="searchSuggestionsSwitch" checked style="cursor: pointer; transform: scale(1.15);">
     </div>
 
     <div class="settings-switch-row">
