@@ -11,12 +11,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   const engineSelectorChip = document.getElementById('engineSelectorChip');
   const engineChipName = document.getElementById('engineChipName');
   const engineMenu = document.getElementById('engineMenu');
-  const atMentionBtn = document.getElementById('atMentionBtn');
   const bentoBtn = document.getElementById('bentoBtn');
   const bentoMenu = document.getElementById('bentoMenu');
   
   // 侧边栏抽屉相关
-  const drawerToggleBtn = document.getElementById('drawerToggleBtn');
   const sidebarDrawer = document.getElementById('sidebarDrawer');
   const drawerBackdrop = document.getElementById('drawerBackdrop');
   const drawerCloseBtn = document.getElementById('drawerCloseBtn');
@@ -28,7 +26,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   const themeToggleBtn = document.getElementById('themeToggleBtn');
   const themeSettings = document.getElementById('themeSettings');
   const darkModeSwitch = document.getElementById('darkModeSwitch');
-  const pillSwitch = document.getElementById('pillSwitch');
   const defaultEngineSelect = document.getElementById('defaultEngineSelect');
 
   let selectedPaletteIndex = 0;
@@ -234,14 +231,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
 
-  // 7. @ 按钮与引擎切换下拉菜单
-  atMentionBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    engineMenu.classList.toggle('hidden');
-    bentoMenu.classList.add('hidden');
-    themeSettings.classList.add('hidden');
-  });
-
+  // 7. 引擎切换下拉菜单
   engineSelectorChip.addEventListener('click', (e) => {
     e.stopPropagation();
     engineMenu.classList.toggle('hidden');
@@ -280,7 +270,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     drawerBackdrop.classList.remove('open');
   }
 
-  drawerToggleBtn.addEventListener('click', () => openDrawer('bookmarks'));
   drawerCloseBtn.addEventListener('click', closeDrawer);
   drawerBackdrop.addEventListener('click', closeDrawer);
 
@@ -443,13 +432,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  if (pillSwitch) {
-    pillSwitch.checked = ThemeManager.showBottomPill;
-    pillSwitch.addEventListener('change', () => {
-      ThemeManager.applyBottomPill(pillSwitch.checked);
-    });
-  }
-
   if (defaultEngineSelect) {
     defaultEngineSelect.value = ThemeManager.defaultEngine;
     defaultEngineSelect.addEventListener('change', () => {
@@ -459,23 +441,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  // 11. 底部胶囊点击事件：复制快捷指令提示
-  const bottomPill = document.getElementById('bottomPill');
-  if (bottomPill) {
-    bottomPill.addEventListener('click', (e) => {
-      e.preventDefault();
-      mainInput.focus();
-      mainInput.value = '/';
-      handleInputChange();
-    });
-  }
-
-  // 12. 全局点击外部区域自动收起弹出层 (Light Dismiss)
+  // 11. 全局点击外部区域自动收起弹出层 (Light Dismiss)
   document.addEventListener('click', (e) => {
     if (!slashPalette.contains(e.target) && e.target !== mainInput) {
       hidePalette();
     }
-    if (!engineMenu.contains(e.target) && !engineSelectorChip.contains(e.target) && !atMentionBtn.contains(e.target)) {
+    if (!engineMenu.contains(e.target) && !engineSelectorChip.contains(e.target)) {
       engineMenu.classList.add('hidden');
     }
     if (!bentoMenu.contains(e.target) && !bentoBtn.contains(e.target)) {

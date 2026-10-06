@@ -2,18 +2,15 @@
 const ThemeManager = {
   currentAccent: 'orange',
   currentMode: 'light',
-  showBottomPill: true,
   defaultEngine: 'google',
 
   async init() {
     this.currentAccent = await StorageService.get('theme_accent', 'orange');
     this.currentMode = await StorageService.get('theme_mode', 'light');
-    this.showBottomPill = await StorageService.get('show_bottom_pill', true);
     this.defaultEngine = await StorageService.get('default_engine', 'google');
 
     this.applyAccent(this.currentAccent);
     this.applyMode(this.currentMode);
-    this.applyBottomPill(this.showBottomPill);
   },
 
   applyAccent(accent) {
@@ -37,18 +34,6 @@ const ThemeManager = {
     StorageService.set('theme_mode', mode);
   },
 
-  applyBottomPill(show) {
-    this.showBottomPill = show;
-    const pill = document.getElementById('bottomPill');
-    if (pill) {
-      if (show) {
-        pill.classList.remove('hidden');
-      } else {
-        pill.classList.add('hidden');
-      }
-    }
-    StorageService.set('show_bottom_pill', show);
-  },
 
   updateActiveColorDot(accent) {
     document.querySelectorAll('.color-dot').forEach(dot => {

@@ -3,7 +3,6 @@
   --bg-base: #f5f6f8;
   --bg-surface: #ffffff;
   --bg-surface-elevated: #ffffff;
-  --bg-surface-translucent: rgba(255, 255, 255, 0.85);
   --border-subtle: rgba(0, 0, 0, 0.06);
   --border-focus: rgba(255, 122, 40, 0.4);
   
@@ -23,10 +22,6 @@
   --shadow-card: 0 16px 40px -10px rgba(0, 0, 0, 0.07), 0 0 1px 1px rgba(0, 0, 0, 0.04);
   --shadow-floating: 0 20px 48px -8px rgba(0, 0, 0, 0.12), 0 0 1px rgba(0, 0, 0, 0.08);
 
-  --radius-xs: 8px;
-  --radius-sm: 12px;
-  --radius-md: 18px;
-  --radius-lg: 24px;
   --radius-pill: 9999px;
 
   --btn-icon-bg: #ffffff;
@@ -42,7 +37,6 @@
   --bg-base: #111215;
   --bg-surface: #1a1c22;
   --bg-surface-elevated: #21242b;
-  --bg-surface-translucent: rgba(26, 28, 34, 0.88);
   --border-subtle: rgba(255, 255, 255, 0.08);
   --border-focus: rgba(255, 130, 60, 0.5);
 
@@ -123,21 +117,6 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* 自定义壁纸层 */
-.wallpaper-layer {
-  position: fixed;
-  inset: 0;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  z-index: 0;
-  opacity: 0;
-  transition: opacity 0.5s ease;
-  pointer-events: none;
-}
-.wallpaper-layer.active {
-  opacity: 1;
-}
 
 /* 中心柔和弥散光晕 (Ambient Radial Glow) */
 .ambient-glow-wrapper {
@@ -190,10 +169,6 @@ body {
   transform: scale(0.96);
 }
 
-.top-left-btn {
-  top: 24px;
-  left: 24px;
-}
 
 .bottom-right-btn {
   bottom: 24px;
@@ -271,20 +246,6 @@ body {
   padding-left: 2px;
 }
 
-.prompt-icon-badge {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  color: var(--accent-color);
-  flex-shrink: 0;
-  transition: transform 0.2s ease;
-}
-
-.omnibar-card:focus-within .prompt-icon-badge {
-  transform: scale(1.08);
-}
 
 .omnibar-input {
   flex: 1;
@@ -645,11 +606,6 @@ body {
   overflow: hidden;
 }
 
-.bento-app-icon img {
-  width: 24px;
-  height: 24px;
-  object-fit: contain;
-}
 
 .bento-app-name {
   font-size: 12px;
@@ -662,46 +618,6 @@ body {
   max-width: 70px;
 }
 
-/* 底部中央悬浮胶囊 */
-.bottom-pill-badge {
-  position: fixed;
-  bottom: 24px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--bg-surface-translucent);
-  border: 1px solid var(--border-subtle);
-  box-shadow: var(--shadow-sm);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  padding: 8px 18px;
-  border-radius: var(--radius-pill);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  z-index: 20;
-  text-decoration: none;
-}
-
-.bottom-pill-badge:hover {
-  box-shadow: var(--shadow-md);
-  transform: translateX(-50%) translateY(-2px);
-  color: var(--text-primary);
-}
-
-.bottom-pill-link {
-  color: var(--accent-color);
-  font-weight: 500;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-.bottom-pill-badge:hover .bottom-pill-link {
-  color: var(--accent-hover);
-}
 
 /* 左侧抽屉 (Drawer) */
 .drawer-backdrop {
