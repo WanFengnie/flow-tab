@@ -570,27 +570,184 @@ body {
   color: var(--text-secondary);
 }
 
+.bento-add-btn {
+  border: none;
+  background: var(--accent-light);
+  color: var(--accent-color);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.bento-add-btn:hover {
+  background: var(--accent-color);
+  color: #ffffff;
+}
+
+/* 添加快捷方式内联表单 */
+.bento-add-form {
+  background: var(--btn-icon-hover);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 10px;
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bento-form-input {
+  width: 100%;
+  padding: 7px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 12px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.bento-form-input:focus {
+  border-color: var(--border-focus);
+}
+
+.bento-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.bento-btn-secondary,
+.bento-btn-primary {
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s ease;
+}
+
+.bento-btn-secondary {
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+.bento-btn-secondary:hover {
+  background: var(--border-subtle);
+  color: var(--text-primary);
+}
+
+.bento-btn-primary {
+  background: var(--accent-color);
+  color: #ffffff;
+}
+
+.bento-btn-primary:hover {
+  background: var(--accent-hover);
+}
+
 .bento-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 12px;
+  min-height: 80px;
+}
+
+.bento-grid.is-empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.bento-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 16px 0;
+  color: var(--text-tertiary);
+  font-size: 12px;
+  width: 100%;
+}
+
+.bento-empty-add-btn {
+  padding: 5px 12px;
+  border-radius: 6px;
+  border: 1px dashed var(--border-subtle);
+  background: var(--bg-surface);
+  color: var(--accent-color);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  margin-top: 4px;
+}
+
+.bento-empty-add-btn:hover {
+  border-color: var(--accent-color);
+  background: var(--accent-light);
 }
 
 .bento-app-item {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 6px;
   padding: 10px 4px;
   border-radius: 14px;
-  text-decoration: none;
-  color: var(--text-primary);
   transition: all 0.2s ease;
 }
 
 .bento-app-item:hover {
   background: var(--btn-icon-hover);
   transform: translateY(-2px);
+}
+
+.bento-app-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  color: var(--text-primary);
+  width: 100%;
+}
+
+.bento-item-delete {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.45);
+  color: #ffffff;
+  border: none;
+  font-size: 10px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s ease, background 0.15s ease;
+  z-index: 2;
+}
+
+.bento-app-item:hover .bento-item-delete {
+  opacity: 1;
+}
+
+.bento-item-delete:hover {
+  background: #f43f5e;
 }
 
 .bento-app-icon {
@@ -604,8 +761,21 @@ body {
   justify-content: center;
   border: 1px solid var(--border-subtle);
   overflow: hidden;
+  position: relative;
 }
 
+.bento-app-icon img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.bento-fallback-icon {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--accent-color);
+  text-transform: uppercase;
+}
 
 .bento-app-name {
   font-size: 12px;

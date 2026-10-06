@@ -163,62 +163,25 @@
         </div>
       </div>
 
-      <!-- Bento 快捷应用九宫格卡片 (Bento Popover) -->
+      <!-- Bento 自定义常用捷径面板 (Bento Popover) -->
       <div class="popover-card bento-popover hidden" id="bentoMenu">
         <div class="bento-header">
           <span class="bento-title">常用捷径与站点</span>
-          <span style="font-size: 11px; color: var(--text-tertiary);">点击直达</span>
+          <button class="bento-add-btn" id="bentoAddToggleBtn" title="添加常用站点">+ 添加</button>
         </div>
-        <div class="bento-grid">
-          <a href="https://github.com" class="bento-app-item" target="_blank">
-            <div class="bento-app-icon">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-            </div>
-            <span class="bento-app-name">GitHub</span>
-          </a>
-          <a href="https://bilibili.com" class="bento-app-item" target="_blank">
-            <div class="bento-app-icon" style="color: #00aeec;">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M17.813 4.653h.854c1.51 0 2.769.84 3.154 2.052.05.158.079.33.079.51v10.367c0 1.62-1.464 2.934-3.233 2.934H5.333C3.564 20.516 2.1 19.202 2.1 17.582V7.215c0-.18.029-.352.079-.51.385-1.212 1.644-2.052 3.154-2.052h.854L4.35 2.815a.8.8 0 0 1 1.13-1.13l2.84 2.84h7.36l2.84-2.84a.8.8 0 1 1 1.13 1.13l-1.837 1.838zM6.9 10.38c-.773 0-1.4.672-1.4 1.5 0 .828.627 1.5 1.4 1.5.773 0 1.4-.672 1.4-1.5 0-.828-.627-1.5-1.4-1.5zm10.2 0c-.773 0-1.4.672-1.4 1.5 0 .828.627 1.5 1.4 1.5.773 0 1.4-.672 1.4-1.5 0-.828-.627-1.5-1.4-1.5z"/></svg>
-            </div>
-            <span class="bento-app-name">哔哩哔哩</span>
-          </a>
-          <a href="https://chat.deepseek.com" class="bento-app-item" target="_blank">
-            <div class="bento-app-icon" style="color: #0066ff;">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48 2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48 2.83-2.83"/></svg>
-            </div>
-            <span class="bento-app-name">DeepSeek</span>
-          </a>
-          <a href="https://youtube.com" class="bento-app-item" target="_blank">
-            <div class="bento-app-icon" style="color: #ff0000;">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-            </div>
-            <span class="bento-app-name">YouTube</span>
-          </a>
-          <a href="https://zhihu.com" class="bento-app-item" target="_blank">
-            <div class="bento-app-icon" style="color: #0084ff;">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M5.72 4.4v2.09c1.47.05 2.92.17 4.35.35l.43-1.88C8.89 4.67 7.3 4.47 5.72 4.4zm.01 4.14v3.54h3.76V8.92c-1.25-.13-2.51-.26-3.76-.38zm-1.89 7.37H2v2.09h1.84c.64 1.77 1.63 3.32 2.95 4.6l1.62-1.33c-.98-.98-1.74-2.17-2.27-3.48h4.63v-1.88H3.84zm7.62-3.83h2.62c.31-1.39.46-2.82.46-4.28 0-.32-.01-.64-.02-.95H11.5v-2.09h5.18c-.1-1.07-.35-2.09-.73-3.04l2.12-.7c.54 1.25.9 2.6 1.05 4.02h3.38v2.09h-3.45c0 .32.01.63.01.95 0 1.83-.2 3.61-.59 5.31h2.7v2.09h-3.32c-.93 2.82-2.52 5.25-4.63 7.15l-1.52-1.44c1.86-1.63 3.23-3.73 4.01-6.13h-4.24v-2.02z"/></svg>
-            </div>
-            <span class="bento-app-name">知乎</span>
-          </a>
-          <a href="https://v2ex.com" class="bento-app-item" target="_blank">
-            <div class="bento-app-icon" style="color: #333;">
-              <span style="font-weight: 800; font-size: 15px;">V2</span>
-            </div>
-            <span class="bento-app-name">V2EX</span>
-          </a>
-          <a href="https://juejin.cn" class="bento-app-item" target="_blank">
-            <div class="bento-app-icon" style="color: #1e80ff;">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="m12 14.316 4.397-3.52-1.353-1.084L12 12.148l-3.044-2.436-1.353 1.084L12 14.316zm0-7.394 1.722-1.378L12 4.167 10.278 5.544 12 6.922zm0 10.965 7.072-5.658 1.353 1.083L12 19.97l-8.425-6.66 1.353-1.083L12 17.887z"/></svg>
-            </div>
-            <span class="bento-app-name">稀土掘金</span>
-          </a>
-          <a href="https://google.com" class="bento-app-item" target="_blank">
-            <div class="bento-app-icon" style="color: #4285f4;">
-              <span style="font-weight: 800; font-size: 18px;">G</span>
-            </div>
-            <span class="bento-app-name">Google</span>
-          </a>
+
+        <!-- 添加表单区域 -->
+        <div class="bento-add-form hidden" id="bentoAddForm">
+          <input type="text" id="shortcutNameInput" class="bento-form-input" placeholder="站点名称 (如 掘金)" autocomplete="off" />
+          <input type="text" id="shortcutUrlInput" class="bento-form-input" placeholder="网址 (如 juejin.cn)" autocomplete="off" />
+          <div class="bento-form-actions">
+            <button type="button" class="bento-btn-secondary" id="bentoCancelBtn">取消</button>
+            <button type="button" class="bento-btn-primary" id="bentoSaveBtn">保存</button>
+          </div>
         </div>
+
+        <!-- 常用站点动态网格（默认为空） -->
+        <div class="bento-grid" id="bentoGrid"></div>
       </div>
     </div>
   </main>

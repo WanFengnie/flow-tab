@@ -13,6 +13,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   const engineMenu = document.getElementById('engineMenu');
   const bentoBtn = document.getElementById('bentoBtn');
   const bentoMenu = document.getElementById('bentoMenu');
+  const bentoGrid = document.getElementById('bentoGrid');
+  const bentoAddToggleBtn = document.getElementById('bentoAddToggleBtn');
+  const bentoAddForm = document.getElementById('bentoAddForm');
+  const shortcutNameInput = document.getElementById('shortcutNameInput');
+  const shortcutUrlInput = document.getElementById('shortcutUrlInput');
+  const bentoSaveBtn = document.getElementById('bentoSaveBtn');
+  const bentoCancelBtn = document.getElementById('bentoCancelBtn');
   
   // 侧边栏抽屉相关
   const sidebarDrawer = document.getElementById('sidebarDrawer');
@@ -57,6 +64,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         opt.classList.remove('active');
       }
     });
+    if (defaultEngineSelect && defaultEngineSelect.value !== engineKey) {
+      defaultEngineSelect.value = engineKey;
+    }
   }
 
   updateEngineDisplay(currentActiveEngine);
@@ -243,12 +253,172 @@ document.addEventListener('DOMContentLoaded', async () => {
     opt.addEventListener('click', () => {
       const engineKey = opt.getAttribute('data-engine');
       updateEngineDisplay(engineKey);
+      ThemeManager.defaultEngine = engineKey;
+      StorageService.set('default_engine', engineKey);
       engineMenu.classList.add('hidden');
       mainInput.focus();
     });
   });
 
-  // 8. Bento 常用应用快捷网格
+  // 8. Bento 自定义常用快捷站点管理（默认为空）
+  let customShortcuts = await StorageService.get('custom_shortcuts', []);
+
+  function renderBentoShortcuts() {
+    if (!bentoGrid) return;
+    bentoGrid.innerHTML = '';
+    if (customShortcuts.length === 0) {
+      bentoGrid.classList.add('is-empty');
+      bentoGrid.innerHTML = `
+        <div class="bento-empty-state">
+          <span>暂无自定义快捷站点</span>
+          <button type="button" class="bento-empty-add-btn" id="bentoEmptyAddBtn">+ 点击添加站点</button>
+        </div>
+      `;
+      const emptyAddBtn = document.getElementById('bentoEmptyAddBtn');
+      if (emptyAddBtn) {
+        emptyAddBtn.addEventListener('click', () => {
+          showBentoForm();
+        });
+      }
+      return;
+    }
+
+    bentoGrid.classList.remove('is-empty');
+    customShortcuts.forEach((item) => {
+      const el = document.createElement('div');
+      el.className = 'bento-app-item';
+      el.dataset.id = item.id;
+
+      let domain = '';
+      try {
+        domain = new URL(item.url).hostname;
+      } catch (e) {
+        domain = item.url.replace(/https?:\/\//, '').split('/')[0];
+      }
+      const firstChar = (item.name || domain || '?').charAt(0).toUpperCase();
+
+      el.innerHTML = `
+        <button type="button" class="bento-item-delete" title="删除" aria-label="删除">✕</button>
+        <a href="${item.url}" target="_blank" class="bento-app-link">
+          <div class="bento-app-icon">
+            <img src="https://www.google.com/s2/favicons?domain=${domain}&sz=64" alt="${item.name}" />
+            <span class="bento-fallback-icon" style="display:none;">${firstChar}</span>
+          </div>
+          <span class="bento-app-name" title="${item.name}">${item.name}</span>
+        </a>
+      `;
+
+      const img = el.querySelector('img');
+      const fallback = el.querySelector('.bento-fallback-icon');
+      img.addEventListener('error', () => {
+        img.style.display = 'none';
+        fallback.style.display = 'flex';
+      });
+
+      const delBtn = el.querySelector('.bento-item-delete');
+      delBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        removeShortcut(item.id);
+      });
+
+      bentoGrid.appendChild(el);
+    });
+  }
+
+  function showBentoForm() {
+    bentoAddForm.classList.remove('hidden');
+    shortcutNameInput.focus();
+  }
+
+  function hideBentoForm() {
+    bentoAddForm.classList.add('hidden');
+    shortcutNameInput.value = '';
+    shortcutUrlInput.value = '';
+  }
+
+  async function saveShortcut() {
+    let rawUrl = shortcutUrlInput.value.trim();
+    if (!rawUrl) {
+      shortcutUrlInput.focus();
+      return;
+    }
+    if (!/^https?:\/\//i.test(rawUrl)) {
+      rawUrl = 'https://' + rawUrl;
+    }
+
+    let name = shortcutNameInput.value.trim();
+    if (!name) {
+      try {
+        name = new URL(rawUrl).hostname.replace(/^www\./, '');
+      } catch (e) {
+        name = rawUrl;
+      }
+    }
+
+    const newShortcut = {
+      id: 'sc_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+      name: name,
+      url: rawUrl
+    };
+
+    customShortcuts.push(newShortcut);
+    await StorageService.set('custom_shortcuts', customShortcuts);
+    renderBentoShortcuts();
+    hideBentoForm();
+  }
+
+  async function removeShortcut(id) {
+    customShortcuts = customShortcuts.filter(s => s.id !== id);
+    await StorageService.set('custom_shortcuts', customShortcuts);
+    renderBentoShortcuts();
+  }
+
+  if (bentoAddToggleBtn) {
+    bentoAddToggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (bentoAddForm.classList.contains('hidden')) {
+        showBentoForm();
+      } else {
+        hideBentoForm();
+      }
+    });
+  }
+
+  if (bentoCancelBtn) {
+    bentoCancelBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      hideBentoForm();
+    });
+  }
+
+  if (bentoSaveBtn) {
+    bentoSaveBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      saveShortcut();
+    });
+  }
+
+  if (shortcutUrlInput) {
+    shortcutUrlInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        saveShortcut();
+      }
+    });
+  }
+  if (shortcutNameInput) {
+    shortcutNameInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        shortcutUrlInput.focus();
+      }
+    });
+  }
+
+  renderBentoShortcuts();
+
+  // 点击展开/收起 Bento 面板
   bentoBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     bentoMenu.classList.toggle('hidden');
