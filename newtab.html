@@ -26,26 +26,26 @@
   <main class="main-viewport">
     <!-- 居中几何流光 Logo -->
     <div class="brand-hero">
-      <svg class="brand-symbol" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg class="brand-symbol" id="brandFlower" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <linearGradient id="brandGrad" x1="15" y1="15" x2="85" y2="85" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stop-color="#ff9f43" />
-            <stop offset="50%" stop-color="#ff792e" />
-            <stop offset="100%" stop-color="#ff521d" />
+            <stop offset="0%" stop-color="var(--flower-stop-1, #ff9f43)" id="flowerStop1a" />
+            <stop offset="50%" stop-color="var(--flower-stop-2, #ff792e)" id="flowerStop1b" />
+            <stop offset="100%" stop-color="var(--flower-stop-3, #ff521d)" id="flowerStop1c" />
           </linearGradient>
           <linearGradient id="brandGrad2" x1="85" y1="15" x2="15" y2="85" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stop-color="#ffa852" />
-            <stop offset="100%" stop-color="#f54e1b" />
+            <stop offset="0%" stop-color="var(--flower-stop-1, #ffa852)" id="flowerStop2a" />
+            <stop offset="100%" stop-color="var(--flower-stop-3, #f54e1b)" id="flowerStop2b" />
           </linearGradient>
           <filter id="subtleShadow" x="-10%" y="-10%" width="120%" height="120%">
-            <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#ff6e26" flood-opacity="0.3" />
+            <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="var(--accent-color, #ff6e26)" flood-opacity="0.3" id="flowerDropShadow" />
           </filter>
         </defs>
         <!-- 4瓣几何交叉圆角条条 -->
         <g filter="url(#subtleShadow)">
           <rect x="22" y="38" width="56" height="24" rx="12" transform="rotate(-45 50 50)" fill="url(#brandGrad)" />
           <rect x="22" y="38" width="56" height="24" rx="12" transform="rotate(45 50 50)" fill="url(#brandGrad2)" />
-          <circle cx="50" cy="50" r="10" fill="#ffffff" fill-opacity="0.2" />
+          <circle cx="50" cy="50" r="10" fill="#ffffff" fill-opacity="0.25" />
         </g>
       </svg>
     </div>
@@ -219,13 +219,30 @@
   <!-- 右下角主题设置面板 (Theme Settings Popover) -->
   <div class="theme-settings-popover hidden" id="themeSettings">
     <div>
-      <div class="settings-group-title">主题光晕配色</div>
+      <div class="settings-group-title">预设经典配色</div>
       <div class="color-palette-options">
-        <div class="color-dot active" data-color="orange" style="background: #ff6e26;" title="晨曦暖橙 (经典原版)"></div>
-        <div class="color-dot" data-color="purple" style="background: #8b5cf6;" title="极光幽紫"></div>
-        <div class="color-dot" data-color="emerald" style="background: #10b981;" title="翠微青竹"></div>
-        <div class="color-dot" data-color="blue" style="background: #3b82f6;" title="澄澈海蓝"></div>
-        <div class="color-dot" data-color="rose" style="background: #f43f5e;" title="霞彩玫瑰"></div>
+        <div class="color-dot active" data-color="#ff6e26" style="background: #ff6e26;" title="晨曦暖橙 (经典原版)"></div>
+        <div class="color-dot" data-color="#8b5cf6" style="background: #8b5cf6;" title="极光幽紫"></div>
+        <div class="color-dot" data-color="#10b981" style="background: #10b981;" title="翠微青竹"></div>
+        <div class="color-dot" data-color="#3b82f6" style="background: #3b82f6;" title="澄澈海蓝"></div>
+        <div class="color-dot" data-color="#f43f5e" style="background: #f43f5e;" title="霞彩玫瑰"></div>
+      </div>
+    </div>
+
+    <!-- 无极调色板模块 -->
+    <div class="custom-color-section">
+      <div class="settings-group-title">无极调色板</div>
+      <div class="custom-color-row">
+        <label class="custom-color-picker-label" title="点击打开全色谱无极调色盘">
+          <input type="color" id="customColorInput" class="custom-color-native-input" value="#ff6e26">
+          <div class="custom-color-ring" id="customColorRing">
+            <span class="custom-color-thumb" id="customColorThumb" style="background: #ff6e26;"></span>
+          </div>
+        </label>
+        <div class="custom-color-info">
+          <span class="custom-color-hex" id="customColorHexTag">#FF6E26</span>
+          <span class="custom-color-hint">点击圆盘可自由选取全光谱色彩</span>
+        </div>
       </div>
     </div>
 

@@ -198,17 +198,17 @@ body {
 }
 
 .brand-symbol {
-  width: 58px;
-  height: 58px;
+  width: 84px;
+  height: 84px;
   cursor: pointer;
   animation: logoFloat 7s ease-in-out infinite alternate;
-  filter: drop-shadow(0 8px 16px rgba(255, 110, 38, 0.22));
-  transition: transform 0.3s ease, filter 0.3s ease;
+  filter: drop-shadow(0 10px 22px var(--accent-glow, rgba(255, 110, 38, 0.25)));
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), filter 0.3s ease;
 }
 
 .brand-symbol:hover {
   transform: scale(1.08) rotate(4deg);
-  filter: drop-shadow(0 12px 24px rgba(255, 110, 38, 0.35));
+  filter: drop-shadow(0 14px 28px var(--accent-glow, rgba(255, 110, 38, 0.38)));
 }
 
 /* 核心输入搜索卡片容器 */
@@ -961,8 +961,8 @@ body {
 }
 
 .color-dot {
-  width: 30px;
-  height: 30px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   cursor: pointer;
   border: 2px solid transparent;
@@ -976,6 +976,90 @@ body {
 .color-dot.active {
   border-color: var(--text-primary);
   transform: scale(1.1);
+}
+
+/* 无极调色板控件样式 */
+.custom-color-section {
+  display: flex;
+  flex-direction: column;
+  padding-top: 4px;
+}
+
+.custom-color-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px;
+  background: var(--bg-surface);
+  border-radius: 12px;
+  border: 1px solid var(--border-subtle);
+}
+
+.custom-color-picker-label {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.custom-color-native-input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  padding: 0;
+  border: none;
+}
+
+.custom-color-ring {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  padding: 3px;
+  background: conic-gradient(from 0deg, #ff0000, #ff7f00, #ffff00, #00ff00, #00ffff, #0000ff, #8b00ff, #ff0000);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s ease;
+}
+
+.custom-color-picker-label:hover .custom-color-ring {
+  transform: scale(1.1);
+}
+
+.custom-color-thumb {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.15s ease;
+}
+
+.custom-color-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.custom-color-hex {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 0.5px;
+}
+
+.custom-color-hint {
+  font-size: 11px;
+  color: var(--text-tertiary);
 }
 
 .settings-switch-row {

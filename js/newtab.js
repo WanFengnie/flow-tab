@@ -585,9 +585,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.querySelectorAll('.color-dot').forEach(dot => {
     dot.addEventListener('click', () => {
       const color = dot.getAttribute('data-color');
-      ThemeManager.applyAccent(color);
+      ThemeManager.applyAccent(color, true);
     });
   });
+
+  const customColorInput = document.getElementById('customColorInput');
+  if (customColorInput) {
+    customColorInput.addEventListener('input', (e) => {
+      ThemeManager.applyAccent(e.target.value, false);
+    });
+    customColorInput.addEventListener('change', (e) => {
+      ThemeManager.applyAccent(e.target.value, true);
+    });
+  }
 
   if (darkModeSwitch) {
     darkModeSwitch.checked = ThemeManager.currentMode === 'dark';
