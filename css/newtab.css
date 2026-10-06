@@ -338,14 +338,6 @@ body {
   border-color: var(--border-subtle);
 }
 
-.engine-selector-chip .engine-icon {
-  width: 16px;
-  height: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: inherit;
-}
 
 .engine-selector-chip .dropdown-arrow {
   width: 12px;

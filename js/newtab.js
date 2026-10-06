@@ -33,7 +33,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   const themeToggleBtn = document.getElementById('themeToggleBtn');
   const themeSettings = document.getElementById('themeSettings');
   const darkModeSwitch = document.getElementById('darkModeSwitch');
-  const defaultEngineSelect = document.getElementById('defaultEngineSelect');
 
   let selectedPaletteIndex = 0;
   let filteredCommands = [...COMMANDS];
@@ -44,8 +43,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     google: { name: 'Google', url: (q) => `https://www.google.com/search?q=${encodeURIComponent(q)}` },
     baidu: { name: '百度', url: (q) => `https://www.baidu.com/s?wd=${encodeURIComponent(q)}` },
     bing: { name: '必应', url: (q) => `https://cn.bing.com/search?q=${encodeURIComponent(q)}` },
-    deepseek: { name: 'DeepSeek', url: (q) => `https://chat.deepseek.com/?q=${encodeURIComponent(q)}` },
-    chatgpt: { name: 'ChatGPT', url: (q) => `https://chatgpt.com/?q=${encodeURIComponent(q)}` },
     github: { name: 'GitHub', url: (q) => `https://github.com/search?q=${encodeURIComponent(q)}` }
   };
 
@@ -64,9 +61,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         opt.classList.remove('active');
       }
     });
-    if (defaultEngineSelect && defaultEngineSelect.value !== engineKey) {
-      defaultEngineSelect.value = engineKey;
-    }
   }
 
   updateEngineDisplay(currentActiveEngine);
@@ -602,14 +596,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  if (defaultEngineSelect) {
-    defaultEngineSelect.value = ThemeManager.defaultEngine;
-    defaultEngineSelect.addEventListener('change', () => {
-      ThemeManager.defaultEngine = defaultEngineSelect.value;
-      StorageService.set('default_engine', defaultEngineSelect.value);
-      updateEngineDisplay(defaultEngineSelect.value);
-    });
-  }
 
   // 11. 全局点击外部区域自动收起弹出层 (Light Dismiss)
   document.addEventListener('click', (e) => {
