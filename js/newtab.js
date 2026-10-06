@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!q) return [];
     let url = '';
     if (engineKey === 'baidu') {
-      url = `https://suggestion.baidu.com/su?wd=${q}&action=opensearch`;
+      url = `https://suggestion.baidu.com/su?wd=${q}&action=opensearch&ie=utf-8`;
     } else if (engineKey === 'bing') {
       url = `https://api.bing.com/osjson.aspx?query=${q}`;
     } else {
@@ -443,13 +443,24 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   sendBtn.addEventListener('click', executeSearchOrAction);
 
-  // 全局快捷键：随时按 "/" 聚焦输入框并触发妙招
+  // 全局快捷键：随时按 "/" 聚焦输入框并触发妙招；按 "Escape" 快捷收起开启的弹窗
   document.addEventListener('keydown', (e) => {
-    if (e.key === '/' && document.activeElement !== mainInput && document.activeElement !== memoTextarea) {
+    const isEditing = document.activeElement && ['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName);
+
+    if (e.key === '/' && !isEditing) {
       e.preventDefault();
       mainInput.focus();
       mainInput.value = '/';
       handleInputChange();
+      return;
+    }
+
+    if (e.key === 'Escape') {
+      hidePalette();
+      hideSuggestions();
+      if (engineMenu) engineMenu.classList.add('hidden');
+      if (bentoMenu) bentoMenu.classList.add('hidden');
+      if (themeSettings) themeSettings.classList.add('hidden');
     }
   });
 
