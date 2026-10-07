@@ -15,7 +15,8 @@
     "storage",
     "bookmarks",
     "history",
-    "topSites"
+    "topSites",
+    "favicon"
   ],
   "host_permissions": [
     "https://suggestion.baidu.com/*",

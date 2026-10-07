@@ -770,6 +770,24 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     bentoGrid.classList.remove('is-empty');
+
+    function getFaviconUrl(targetUrl) {
+      if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getURL) {
+        try {
+          const url = new URL(chrome.runtime.getURL('/_favicon/'));
+          url.searchParams.set('pageUrl', targetUrl);
+          url.searchParams.set('size', '32');
+          return url.toString();
+        } catch (e) {}
+      }
+      try {
+        const domain = new URL(targetUrl).hostname;
+        return `https://${domain}/favicon.ico`;
+      } catch (e) {
+        return '';
+      }
+    }
+
     customShortcuts.forEach((item) => {
       const el = document.createElement('div');
       el.className = 'bento-app-item';
@@ -782,12 +800,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         domain = item.url.replace(/https?:\/\//, '').split('/')[0];
       }
       const firstChar = (item.name || domain || '?').charAt(0).toUpperCase();
+      const faviconSrc = getFaviconUrl(item.url);
 
       el.innerHTML = `
         <button type="button" class="bento-item-delete" title="删除" aria-label="删除">✕</button>
         <a href="${item.url}" target="_blank" class="bento-app-link">
           <div class="bento-app-icon">
-            <img src="https://www.google.com/s2/favicons?domain=${domain}&sz=64" alt="${item.name}" />
+            <img src="${faviconSrc}" alt="${item.name}" />
             <span class="bento-fallback-icon" style="display:none;">${firstChar}</span>
           </div>
           <span class="bento-app-name" title="${item.name}">${item.name}</span>
@@ -797,6 +816,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       const img = el.querySelector('img');
       const fallback = el.querySelector('.bento-fallback-icon');
       img.addEventListener('error', () => {
+        if (domain && !img.dataset.triedDomainIco) {
+          img.dataset.triedDomainIco = 'true';
+          img.src = `https://${domain}/favicon.ico`;
+          return;
+        }
         img.style.display = 'none';
         fallback.style.display = 'flex';
       });
