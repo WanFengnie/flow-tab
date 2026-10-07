@@ -643,6 +643,116 @@ body {
   justify-content: center;
 }
 
+.custom-engine-edit-btn {
+  background: transparent;
+  border: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  padding: 0;
+  opacity: 0.6;
+}
+
+.custom-engine-edit-btn:hover {
+  opacity: 1;
+  color: var(--accent-color);
+  background: var(--border-subtle);
+}
+
+.engine-menu-divider {
+  height: 1px;
+  background: var(--border-subtle);
+  margin: 4px 4px;
+}
+
+.custom-engine-form {
+  padding: 8px 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.custom-engine-form-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.engine-form-input {
+  width: 100%;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 12px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.engine-form-input:focus {
+  border-color: var(--border-focus);
+}
+
+.custom-engine-hint {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  line-height: 1.4;
+}
+
+.custom-engine-hint code {
+  background: var(--border-subtle);
+  padding: 1px 4px;
+  border-radius: 4px;
+  color: var(--accent-color);
+  font-family: monospace;
+}
+
+.custom-engine-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.engine-btn-secondary,
+.engine-btn-primary {
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s ease;
+}
+
+.engine-btn-secondary {
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+.engine-btn-secondary:hover {
+  background: var(--border-subtle);
+  color: var(--text-primary);
+}
+
+.engine-btn-primary {
+  background: var(--accent-color);
+  color: #ffffff;
+}
+
+.engine-btn-primary:hover {
+  background: var(--accent-hover);
+}
+
 /* 常用捷径应用网格卡片 */
 .bento-popover {
   left: 20px;

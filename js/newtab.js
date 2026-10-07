@@ -20,8 +20,39 @@ document.addEventListener('DOMContentLoaded', async () => {
   const shortcutUrlInput = document.getElementById('shortcutUrlInput');
   const bentoSaveBtn = document.getElementById('bentoSaveBtn');
   const bentoCancelBtn = document.getElementById('bentoCancelBtn');
-  
 
+  // 自定义搜索引擎 DOM 缓存
+  const customEngineOption = document.getElementById('customEngineOption');
+  const customEngineOptionName = document.getElementById('customEngineOptionName');
+  const customEngineEditBtn = document.getElementById('customEngineEditBtn');
+  const customEngineForm = document.getElementById('customEngineForm');
+  const customEngineNameInput = document.getElementById('customEngineNameInput');
+  const customEngineUrlInput = document.getElementById('customEngineUrlInput');
+  const customEngineSaveBtn = document.getElementById('customEngineSaveBtn');
+  const customEngineCancelBtn = document.getElementById('customEngineCancelBtn');
+
+  // 自定义搜索引擎持久化数据
+  let customEngineName = await StorageService.get('custom_engine_name', '自定义');
+  let customEngineUrl = await StorageService.get('custom_engine_url', '');
+
+  // 辅助函数：根据模板动态拼接自定义搜索地址
+  function formatCustomSearchUrl(template, query) {
+    const q = encodeURIComponent(query.trim());
+    const t = (template || '').trim();
+    if (!t) {
+      return `https://duckduckgo.com/?q=${q}`;
+    }
+    if (t.includes('%s')) {
+      return t.replace(/%s/g, q);
+    }
+    if (t.includes('{q}')) {
+      return t.replace(/\{q\}/g, q);
+    }
+    if (t.endsWith('=') || t.endsWith('?') || t.endsWith('/')) {
+      return t + q;
+    }
+    return t.includes('?') ? `${t}&q=${q}` : `${t}?q=${q}`;
+  }
 
   // 主题设置相关
   const themeToggleBtn = document.getElementById('themeToggleBtn');
@@ -37,12 +68,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     google: { name: 'Google', url: (q) => `https://www.google.com/search?q=${encodeURIComponent(q)}` },
     baidu: { name: '百度', url: (q) => `https://www.baidu.com/s?wd=${encodeURIComponent(q)}` },
     bing: { name: '必应', url: (q) => `https://cn.bing.com/search?q=${encodeURIComponent(q)}` },
-    github: { name: 'GitHub', url: (q) => `https://github.com/search?q=${encodeURIComponent(q)}` }
+    github: { name: 'GitHub', url: (q) => `https://github.com/search?q=${encodeURIComponent(q)}` },
+    custom: {
+      name: customEngineName || '自定义',
+      url: (q) => formatCustomSearchUrl(customEngineUrl, q)
+    }
   };
 
   function updateEngineDisplay(engineKey) {
     currentActiveEngine = engineKey;
-    if (ENGINES[engineKey]) {
+    if (engineKey === 'custom') {
+      const displayName = customEngineName || '自定义';
+      engineChipName.textContent = displayName;
+      if (customEngineOptionName) customEngineOptionName.textContent = displayName;
+    } else if (ENGINES[engineKey]) {
       engineChipName.textContent = ENGINES[engineKey].name;
     } else {
       engineChipName.textContent = 'Default';
@@ -116,7 +155,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     let url = '';
     if (engineKey === 'baidu') {
       url = `https://suggestion.baidu.com/su?wd=${q}&action=opensearch&ie=utf-8`;
-    } else if (engineKey === 'bing') {
+    } else if (engineKey === 'bing' || engineKey === 'custom') {
       url = `https://api.bing.com/osjson.aspx?query=${q}`;
     } else {
       url = `https://suggestqueries.google.com/complete/search?client=chrome&q=${q}`;
@@ -458,7 +497,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (e.key === 'Escape') {
       hidePalette();
       hideSuggestions();
-      if (engineMenu) engineMenu.classList.add('hidden');
+      if (engineMenu) {
+        engineMenu.classList.add('hidden');
+        hideCustomEngineForm();
+      }
       if (bentoMenu) bentoMenu.classList.add('hidden');
       if (themeSettings) themeSettings.classList.add('hidden');
     }
@@ -467,6 +509,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // 7. 引擎切换下拉菜单
   engineSelectorChip.addEventListener('click', (e) => {
     e.stopPropagation();
+    hideCustomEngineForm();
     engineMenu.classList.toggle('hidden');
     bentoMenu.classList.add('hidden');
     themeSettings.classList.add('hidden');
@@ -475,13 +518,104 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.querySelectorAll('.engine-option').forEach(opt => {
     opt.addEventListener('click', () => {
       const engineKey = opt.getAttribute('data-engine');
+      if (engineKey === 'custom') {
+        // 若尚未配置过网址，自动展开表单供用户填写
+        if (!customEngineUrl) {
+          showCustomEngineForm();
+          return;
+        }
+      }
       updateEngineDisplay(engineKey);
       ThemeManager.defaultEngine = engineKey;
       StorageService.set('default_engine', engineKey);
       engineMenu.classList.add('hidden');
+      hideCustomEngineForm();
       mainInput.focus();
     });
   });
+
+  if (customEngineEditBtn) {
+    customEngineEditBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      showCustomEngineForm();
+    });
+  }
+
+  function showCustomEngineForm() {
+    if (customEngineForm) {
+      customEngineForm.classList.remove('hidden');
+      if (customEngineNameInput) {
+        customEngineNameInput.value = customEngineName === '自定义' ? '' : customEngineName;
+      }
+      if (customEngineUrlInput) {
+        customEngineUrlInput.value = customEngineUrl;
+        setTimeout(() => customEngineUrlInput.focus(), 50);
+      }
+    }
+  }
+
+  function hideCustomEngineForm() {
+    if (customEngineForm) {
+      customEngineForm.classList.add('hidden');
+    }
+  }
+
+  async function saveCustomEngine() {
+    let name = customEngineNameInput ? customEngineNameInput.value.trim() : '';
+    let url = customEngineUrlInput ? customEngineUrlInput.value.trim() : '';
+    if (!name) name = '自定义';
+    if (url && !/^https?:\/\//i.test(url)) {
+      url = 'https://' + url;
+    }
+
+    customEngineName = name;
+    customEngineUrl = url;
+    ENGINES.custom.name = name;
+    ENGINES.custom.url = (q) => formatCustomSearchUrl(url, q);
+
+    await StorageService.set('custom_engine_name', name);
+    await StorageService.set('custom_engine_url', url);
+
+    updateEngineDisplay('custom');
+    ThemeManager.defaultEngine = 'custom';
+    await StorageService.set('default_engine', 'custom');
+
+    hideCustomEngineForm();
+    engineMenu.classList.add('hidden');
+    mainInput.focus();
+  }
+
+  if (customEngineCancelBtn) {
+    customEngineCancelBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      hideCustomEngineForm();
+    });
+  }
+
+  if (customEngineSaveBtn) {
+    customEngineSaveBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      saveCustomEngine();
+    });
+  }
+
+  if (customEngineUrlInput) {
+    customEngineUrlInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        saveCustomEngine();
+      }
+    });
+  }
+
+  if (customEngineNameInput) {
+    customEngineNameInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        if (customEngineUrlInput) customEngineUrlInput.focus();
+      }
+    });
+  }
 
   // 8. Bento 自定义常用快捷站点管理（默认为空）
   let customShortcuts = await StorageService.get('custom_shortcuts', []);
@@ -690,6 +824,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     if (!engineMenu.contains(e.target) && !engineSelectorChip.contains(e.target)) {
       engineMenu.classList.add('hidden');
+      hideCustomEngineForm();
     }
     if (!bentoMenu.contains(e.target) && !bentoBtn.contains(e.target)) {
       bentoMenu.classList.add('hidden');
