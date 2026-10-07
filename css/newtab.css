@@ -680,6 +680,26 @@ body {
   gap: 2px;
 }
 
+.custom-engine-item {
+  cursor: grab;
+  user-select: none;
+  transition: all 0.15s ease;
+}
+
+.custom-engine-item:active {
+  cursor: grabbing;
+}
+
+.custom-engine-item.is-dragging {
+  opacity: 0.35;
+  transform: scale(0.97);
+}
+
+.custom-engine-item.drag-over {
+  background: var(--accent-light);
+  border-left: 3px solid var(--accent-color);
+}
+
 .custom-engine-name-text {
   max-width: 130px;
   overflow: hidden;
@@ -974,12 +994,33 @@ body {
   gap: 6px;
   padding: 10px 4px;
   border-radius: 14px;
-  transition: all 0.2s ease;
+  cursor: grab;
+  user-select: none;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bento-app-item:active {
+  cursor: grabbing;
 }
 
 .bento-app-item:hover {
   background: var(--btn-icon-hover);
   transform: translateY(-2px);
+}
+
+.bento-app-item.is-dragging {
+  opacity: 0.35;
+  transform: scale(0.92);
+}
+
+.bento-app-item.drag-over {
+  transform: scale(1.08);
+  background: var(--accent-light);
+}
+
+.bento-app-item.drag-over .bento-app-icon {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px var(--accent-color);
 }
 
 .bento-app-link {

@@ -139,10 +139,13 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
 
+    let draggedEngineId = null;
+
     customEngines.forEach(item => {
       const div = document.createElement('div');
       div.className = `engine-option custom-engine-item ${item.id === currentActiveEngine ? 'active' : ''}`;
       div.setAttribute('data-engine', item.id);
+      div.setAttribute('draggable', 'true');
 
       div.innerHTML = `
         <div class="engine-option-left">
@@ -168,6 +171,52 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       div.addEventListener('click', () => {
         selectEngine(item.id);
+      });
+
+      // 拖拽排序事件监听
+      div.addEventListener('dragstart', (e) => {
+        if (e.target.closest('.custom-engine-edit-btn') || e.target.closest('.custom-engine-del-btn')) {
+          e.preventDefault();
+          return;
+        }
+        draggedEngineId = item.id;
+        div.classList.add('is-dragging');
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', item.id);
+      });
+
+      div.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        if (draggedEngineId && draggedEngineId !== item.id) {
+          div.classList.add('drag-over');
+        }
+      });
+
+      div.addEventListener('dragleave', () => {
+        div.classList.remove('drag-over');
+      });
+
+      div.addEventListener('drop', async (e) => {
+        e.preventDefault();
+        div.classList.remove('drag-over');
+        if (!draggedEngineId || draggedEngineId === item.id) return;
+
+        const fromIndex = customEngines.findIndex(c => c.id === draggedEngineId);
+        const toIndex = customEngines.findIndex(c => c.id === item.id);
+        if (fromIndex !== -1 && toIndex !== -1) {
+          const [moved] = customEngines.splice(fromIndex, 1);
+          customEngines.splice(toIndex, 0, moved);
+          await StorageService.set('custom_engines', customEngines);
+          renderCustomEngines();
+        }
+      });
+
+      div.addEventListener('dragend', () => {
+        draggedEngineId = null;
+        document.querySelectorAll('.custom-engine-item').forEach(el => {
+          el.classList.remove('is-dragging', 'drag-over');
+        });
       });
 
       const editBtn = div.querySelector('.custom-engine-edit-btn');
@@ -820,10 +869,13 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     }
 
+    let draggedShortcutId = null;
+
     customShortcuts.forEach((item) => {
       const el = document.createElement('div');
       el.className = 'bento-app-item';
       el.dataset.id = item.id;
+      el.setAttribute('draggable', 'true');
 
       let domain = '';
       try {
@@ -836,14 +888,60 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       el.innerHTML = `
         <button type="button" class="bento-item-delete" title="删除" aria-label="删除">✕</button>
-        <a href="${item.url}" target="_blank" class="bento-app-link">
+        <a href="${item.url}" target="_blank" class="bento-app-link" draggable="false">
           <div class="bento-app-icon">
-            <img src="${faviconSrc}" alt="${item.name}" />
+            <img src="${faviconSrc}" alt="${item.name}" draggable="false" />
             <span class="bento-fallback-icon" style="display:none;">${firstChar}</span>
           </div>
           <span class="bento-app-name" title="${item.name}">${item.name}</span>
         </a>
       `;
+
+      // 拖拽排序事件监听
+      el.addEventListener('dragstart', (e) => {
+        if (e.target.closest('.bento-item-delete')) {
+          e.preventDefault();
+          return;
+        }
+        draggedShortcutId = item.id;
+        el.classList.add('is-dragging');
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', item.id);
+      });
+
+      el.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        if (draggedShortcutId && draggedShortcutId !== item.id) {
+          el.classList.add('drag-over');
+        }
+      });
+
+      el.addEventListener('dragleave', () => {
+        el.classList.remove('drag-over');
+      });
+
+      el.addEventListener('drop', async (e) => {
+        e.preventDefault();
+        el.classList.remove('drag-over');
+        if (!draggedShortcutId || draggedShortcutId === item.id) return;
+
+        const fromIndex = customShortcuts.findIndex(s => s.id === draggedShortcutId);
+        const toIndex = customShortcuts.findIndex(s => s.id === item.id);
+        if (fromIndex !== -1 && toIndex !== -1) {
+          const [moved] = customShortcuts.splice(fromIndex, 1);
+          customShortcuts.splice(toIndex, 0, moved);
+          await StorageService.set('custom_shortcuts', customShortcuts);
+          renderBentoShortcuts();
+        }
+      });
+
+      el.addEventListener('dragend', () => {
+        draggedShortcutId = null;
+        document.querySelectorAll('.bento-app-item').forEach(itemEl => {
+          itemEl.classList.remove('is-dragging', 'drag-over');
+        });
+      });
 
       const img = el.querySelector('img');
       const fallback = el.querySelector('.bento-fallback-icon');
