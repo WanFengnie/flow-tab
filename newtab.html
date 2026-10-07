@@ -165,29 +165,18 @@
 
         <div class="engine-menu-divider"></div>
 
-        <!-- 自定义搜索引擎选项 -->
-        <div class="engine-option" data-engine="custom" id="customEngineOption">
-          <div class="engine-option-left">
-            <span class="engine-option-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"/>
-                <line x1="2" y1="12" x2="22" y2="12"/>
-                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
-              </svg>
-            </span>
-            <span id="customEngineOptionName">自定义</span>
-          </div>
-          <button type="button" class="custom-engine-edit-btn" id="customEngineEditBtn" title="配置自定义搜索引擎" aria-label="编辑自定义引擎">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
-              <path d="m15 5 4 4"/>
-            </svg>
-          </button>
+        <!-- 自定义搜索引擎分组头部 -->
+        <div class="custom-engines-header">
+          <span>自定义引擎</span>
+          <button type="button" class="custom-engine-add-btn" id="customEngineAddBtn" title="添加新的搜索引擎">+ 添加</button>
         </div>
 
-        <!-- 自定义引擎编辑表单 -->
+        <!-- 自定义引擎动态列表容器 -->
+        <div class="custom-engines-list" id="customEnginesList"></div>
+
+        <!-- 自定义引擎编辑/添加表单 -->
         <div class="custom-engine-form hidden" id="customEngineForm">
-          <div class="custom-engine-form-title">配置自定义搜索引擎</div>
+          <div class="custom-engine-form-title" id="customEngineFormTitle">添加自定义搜索引擎</div>
           <input type="text" id="customEngineNameInput" class="engine-form-input" placeholder="引擎名称（如：DuckDuckGo）" autocomplete="off" />
           <input type="text" id="customEngineUrlInput" class="engine-form-input" placeholder="搜索网址（包含 %s）" autocomplete="off" />
           <div class="custom-engine-hint">网址中用 <code>%s</code> 代表搜索关键词</div>

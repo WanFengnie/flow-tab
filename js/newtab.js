@@ -21,19 +21,34 @@ document.addEventListener('DOMContentLoaded', async () => {
   const bentoSaveBtn = document.getElementById('bentoSaveBtn');
   const bentoCancelBtn = document.getElementById('bentoCancelBtn');
 
-  // 自定义搜索引擎 DOM 缓存
-  const customEngineOption = document.getElementById('customEngineOption');
-  const customEngineOptionName = document.getElementById('customEngineOptionName');
-  const customEngineEditBtn = document.getElementById('customEngineEditBtn');
+  // 自定义搜索引擎 DOM 缓存与状态
+  const customEnginesList = document.getElementById('customEnginesList');
+  const customEngineAddBtn = document.getElementById('customEngineAddBtn');
   const customEngineForm = document.getElementById('customEngineForm');
+  const customEngineFormTitle = document.getElementById('customEngineFormTitle');
   const customEngineNameInput = document.getElementById('customEngineNameInput');
   const customEngineUrlInput = document.getElementById('customEngineUrlInput');
   const customEngineSaveBtn = document.getElementById('customEngineSaveBtn');
   const customEngineCancelBtn = document.getElementById('customEngineCancelBtn');
 
-  // 自定义搜索引擎持久化数据
-  let customEngineName = await StorageService.get('custom_engine_name', '自定义');
-  let customEngineUrl = await StorageService.get('custom_engine_url', '');
+  let editingEngineId = null;
+
+  // 自定义搜索引擎列表持久化数据与平滑迁移
+  let customEngines = await StorageService.get('custom_engines', []);
+  if (!Array.isArray(customEngines) || customEngines.length === 0) {
+    const legacyUrl = await StorageService.get('custom_engine_url', '');
+    const legacyName = await StorageService.get('custom_engine_name', '自定义');
+    if (legacyUrl) {
+      customEngines = [{
+        id: 'ce_' + Date.now(),
+        name: legacyName || '自定义',
+        url: legacyUrl
+      }];
+      await StorageService.set('custom_engines', customEngines);
+    } else {
+      customEngines = [];
+    }
+  }
 
   // 辅助函数：根据模板动态拼接自定义搜索地址
   function formatCustomSearchUrl(template, query) {
@@ -63,32 +78,52 @@ document.addEventListener('DOMContentLoaded', async () => {
   let filteredCommands = [...COMMANDS];
   let currentActiveEngine = ThemeManager.defaultEngine || 'google';
 
-  // 3. 引擎元数据与映射
+  // 3. 基础预设引擎元数据
   const ENGINES = {
     google: { name: 'Google', url: (q) => `https://www.google.com/search?q=${encodeURIComponent(q)}` },
     baidu: { name: '百度', url: (q) => `https://www.baidu.com/s?wd=${encodeURIComponent(q)}` },
     bing: { name: '必应', url: (q) => `https://cn.bing.com/search?q=${encodeURIComponent(q)}` },
-    github: { name: 'GitHub', url: (q) => `https://github.com/search?q=${encodeURIComponent(q)}` },
-    custom: {
-      name: customEngineName || '自定义',
-      url: (q) => formatCustomSearchUrl(customEngineUrl, q)
-    }
+    github: { name: 'GitHub', url: (q) => `https://github.com/search?q=${encodeURIComponent(q)}` }
   };
+
+  function getActiveEngineExecutor() {
+    if (ENGINES[currentActiveEngine]) {
+      return ENGINES[currentActiveEngine];
+    }
+    const customItem = customEngines.find(c => c.id === currentActiveEngine);
+    if (customItem) {
+      return {
+        name: customItem.name,
+        url: (q) => formatCustomSearchUrl(customItem.url, q)
+      };
+    }
+    return ENGINES.google;
+  }
 
   function updateEngineDisplay(engineKey) {
     currentActiveEngine = engineKey;
-    if (engineKey === 'custom') {
-      const displayName = customEngineName || '自定义';
-      engineChipName.textContent = displayName;
-      if (customEngineOptionName) customEngineOptionName.textContent = displayName;
+    const customItem = customEngines.find(c => c.id === engineKey);
+    if (customItem) {
+      engineChipName.textContent = customItem.name;
     } else if (ENGINES[engineKey]) {
       engineChipName.textContent = ENGINES[engineKey].name;
     } else {
-      engineChipName.textContent = 'Default';
+      engineChipName.textContent = 'Google';
+      currentActiveEngine = 'google';
     }
-    // 同步下拉单选激活态
-    document.querySelectorAll('.engine-option').forEach(opt => {
-      if (opt.getAttribute('data-engine') === engineKey) {
+
+    // 同步基础 4 选项激活态
+    document.querySelectorAll('#engineMenu .engine-option:not(.custom-engine-item)').forEach(opt => {
+      if (opt.getAttribute('data-engine') === currentActiveEngine) {
+        opt.classList.add('active');
+      } else {
+        opt.classList.remove('active');
+      }
+    });
+
+    // 同步自定义选项激活态
+    document.querySelectorAll('.custom-engine-item').forEach(opt => {
+      if (opt.getAttribute('data-engine') === currentActiveEngine) {
         opt.classList.add('active');
       } else {
         opt.classList.remove('active');
@@ -96,6 +131,66 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
+  function renderCustomEngines() {
+    if (!customEnginesList) return;
+    customEnginesList.innerHTML = '';
+    if (customEngines.length === 0) {
+      customEnginesList.innerHTML = `<div class="custom-engines-empty">暂无自定义，点击上方“+ 添加”</div>`;
+      return;
+    }
+
+    customEngines.forEach(item => {
+      const div = document.createElement('div');
+      div.className = `engine-option custom-engine-item ${item.id === currentActiveEngine ? 'active' : ''}`;
+      div.setAttribute('data-engine', item.id);
+
+      div.innerHTML = `
+        <div class="engine-option-left">
+          <span class="engine-option-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="2" y1="12" x2="22" y2="12"/>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+            </svg>
+          </span>
+          <span class="custom-engine-name-text" title="${item.name}">${item.name}</span>
+        </div>
+        <div class="custom-engine-actions-right">
+          <button type="button" class="custom-engine-edit-btn" title="编辑" aria-label="编辑">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
+              <path d="m15 5 4 4"/>
+            </svg>
+          </button>
+          <button type="button" class="custom-engine-del-btn" title="删除" aria-label="删除">✕</button>
+        </div>
+      `;
+
+      div.addEventListener('click', () => {
+        selectEngine(item.id);
+      });
+
+      const editBtn = div.querySelector('.custom-engine-edit-btn');
+      if (editBtn) {
+        editBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          showCustomEngineForm(item);
+        });
+      }
+
+      const delBtn = div.querySelector('.custom-engine-del-btn');
+      if (delBtn) {
+        delBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          deleteCustomEngine(item.id);
+        });
+      }
+
+      customEnginesList.appendChild(div);
+    });
+  }
+
+  renderCustomEngines();
   updateEngineDisplay(currentActiveEngine);
 
   // --- 搜索联想与历史记录管理 ---
@@ -412,7 +507,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // 默认使用当前选中的引擎进行常规搜索
-    const engine = ENGINES[currentActiveEngine] || ENGINES.google;
+    const engine = getActiveEngineExecutor();
     window.location.href = engine.url(text);
   }
 
@@ -506,7 +601,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
 
-  // 7. 引擎切换下拉菜单
+  // 7. 引擎切换下拉菜单与多自定义引擎管理
+  function selectEngine(engineKey) {
+    updateEngineDisplay(engineKey);
+    ThemeManager.defaultEngine = engineKey;
+    StorageService.set('default_engine', engineKey);
+    engineMenu.classList.add('hidden');
+    hideCustomEngineForm();
+    mainInput.focus();
+  }
+
   engineSelectorChip.addEventListener('click', (e) => {
     e.stopPropagation();
     hideCustomEngineForm();
@@ -515,74 +619,99 @@ document.addEventListener('DOMContentLoaded', async () => {
     themeSettings.classList.add('hidden');
   });
 
-  document.querySelectorAll('.engine-option').forEach(opt => {
+  // 绑定系统预设基础 4 个引擎项
+  document.querySelectorAll('#engineMenu .engine-option:not(.custom-engine-item)').forEach(opt => {
     opt.addEventListener('click', () => {
       const engineKey = opt.getAttribute('data-engine');
-      if (engineKey === 'custom') {
-        // 若尚未配置过网址，自动展开表单供用户填写
-        if (!customEngineUrl) {
-          showCustomEngineForm();
-          return;
-        }
-      }
-      updateEngineDisplay(engineKey);
-      ThemeManager.defaultEngine = engineKey;
-      StorageService.set('default_engine', engineKey);
-      engineMenu.classList.add('hidden');
-      hideCustomEngineForm();
-      mainInput.focus();
+      selectEngine(engineKey);
     });
   });
 
-  if (customEngineEditBtn) {
-    customEngineEditBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      showCustomEngineForm();
-    });
-  }
-
-  function showCustomEngineForm() {
-    if (customEngineForm) {
-      customEngineForm.classList.remove('hidden');
-      if (customEngineNameInput) {
-        customEngineNameInput.value = customEngineName === '自定义' ? '' : customEngineName;
-      }
-      if (customEngineUrlInput) {
-        customEngineUrlInput.value = customEngineUrl;
-        setTimeout(() => customEngineUrlInput.focus(), 50);
-      }
+  function showCustomEngineForm(itemToEdit = null) {
+    if (!customEngineForm) return;
+    customEngineForm.classList.remove('hidden');
+    if (itemToEdit) {
+      editingEngineId = itemToEdit.id;
+      if (customEngineFormTitle) customEngineFormTitle.textContent = '编辑自定义搜索引擎';
+      if (customEngineNameInput) customEngineNameInput.value = itemToEdit.name;
+      if (customEngineUrlInput) customEngineUrlInput.value = itemToEdit.url;
+    } else {
+      editingEngineId = null;
+      if (customEngineFormTitle) customEngineFormTitle.textContent = '添加自定义搜索引擎';
+      if (customEngineNameInput) customEngineNameInput.value = '';
+      if (customEngineUrlInput) customEngineUrlInput.value = '';
     }
+    setTimeout(() => {
+      if (customEngineNameInput && !itemToEdit) {
+        customEngineNameInput.focus();
+      } else if (customEngineUrlInput) {
+        customEngineUrlInput.focus();
+      }
+    }, 50);
   }
 
   function hideCustomEngineForm() {
     if (customEngineForm) {
       customEngineForm.classList.add('hidden');
+      editingEngineId = null;
     }
   }
 
   async function saveCustomEngine() {
-    let name = customEngineNameInput ? customEngineNameInput.value.trim() : '';
     let url = customEngineUrlInput ? customEngineUrlInput.value.trim() : '';
-    if (!name) name = '自定义';
-    if (url && !/^https?:\/\//i.test(url)) {
+    if (!url) {
+      if (customEngineUrlInput) customEngineUrlInput.focus();
+      return;
+    }
+    if (!/^https?:\/\//i.test(url)) {
       url = 'https://' + url;
     }
 
-    customEngineName = name;
-    customEngineUrl = url;
-    ENGINES.custom.name = name;
-    ENGINES.custom.url = (q) => formatCustomSearchUrl(url, q);
+    let name = customEngineNameInput ? customEngineNameInput.value.trim() : '';
+    if (!name) {
+      try {
+        name = new URL(url).hostname.replace(/^www\./, '');
+      } catch (e) {
+        name = '自定义';
+      }
+    }
 
-    await StorageService.set('custom_engine_name', name);
-    await StorageService.set('custom_engine_url', url);
+    let targetEngineId = '';
+    if (editingEngineId) {
+      const idx = customEngines.findIndex(c => c.id === editingEngineId);
+      if (idx !== -1) {
+        customEngines[idx].name = name;
+        customEngines[idx].url = url;
+        targetEngineId = editingEngineId;
+      }
+    } else {
+      targetEngineId = 'ce_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4);
+      customEngines.push({
+        id: targetEngineId,
+        name: name,
+        url: url
+      });
+    }
 
-    updateEngineDisplay('custom');
-    ThemeManager.defaultEngine = 'custom';
-    await StorageService.set('default_engine', 'custom');
+    await StorageService.set('custom_engines', customEngines);
+    renderCustomEngines();
+    selectEngine(targetEngineId);
+  }
 
-    hideCustomEngineForm();
-    engineMenu.classList.add('hidden');
-    mainInput.focus();
+  async function deleteCustomEngine(id) {
+    customEngines = customEngines.filter(c => c.id !== id);
+    await StorageService.set('custom_engines', customEngines);
+    if (currentActiveEngine === id) {
+      selectEngine('google');
+    }
+    renderCustomEngines();
+  }
+
+  if (customEngineAddBtn) {
+    customEngineAddBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      showCustomEngineForm();
+    });
   }
 
   if (customEngineCancelBtn) {
