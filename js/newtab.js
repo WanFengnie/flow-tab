@@ -857,7 +857,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         try {
           const url = new URL(chrome.runtime.getURL('/_favicon/'));
           url.searchParams.set('pageUrl', targetUrl);
-          url.searchParams.set('size', '32');
+          url.searchParams.set('size', '64');
           return url.toString();
         } catch (e) {}
       }
