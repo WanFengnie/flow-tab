@@ -1,4 +1,4 @@
-# Flow Tab - 极简流光新标签页
+# Flow Tab - 极简新标签页
 
 >  一个极简的 Chrome / Chromium 新标签页扩展 (Manifest V3)
 
