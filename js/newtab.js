@@ -462,10 +462,31 @@ document.addEventListener('DOMContentLoaded', async () => {
     const parts = rawVal.split(/\s+/);
     let query = '';
     if (parts.length > 1) {
-      query = parts.slice(1).join(' ');
+      query = parts.slice(1).join(' ').trim();
     }
-    hidePalette();
-    cmdItem.action(query);
+
+    // 针对系统工具类直达页面（无需参数，直接打开 Chrome 原生系统页）
+    const isDirectSystemCmd = ['/bm', '/hist', '/ext', '/dl'].includes(cmdItem.cmd);
+    if (isDirectSystemCmd) {
+      hidePalette();
+      cmdItem.action('');
+      return;
+    }
+
+    // 针对搜索/翻译类指令（如 /bili, /yt, /trans 等）：
+    // 若已有搜索词，直接执行搜索；
+    // 若尚无搜索词（用户刚点击指令或按回车选择），将指令填入输入框并聚焦末尾，等待用户输入搜索词，避免空跳转
+    if (query) {
+      hidePalette();
+      cmdItem.action(query);
+    } else {
+      mainInput.value = `${cmdItem.cmd} `;
+      hidePalette();
+      mainInput.focus();
+      const len = mainInput.value.length;
+      mainInput.setSelectionRange(len, len);
+      handleInputChange();
+    }
   }
 
   // 6. 搜索执行逻辑
@@ -482,15 +503,26 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
 
-    // 如果是直接以 / 开头的命令，如 "/bilibili 柯南"
+    // 如果是以 / 开头的命令，如 "/bili 柯南" 或仅有 "/bili"
     if (text.startsWith('/')) {
       const parts = text.split(/\s+/);
       const cmdStr = parts[0].toLowerCase();
       const matched = COMMANDS.find(c => c.cmd.toLowerCase() === cmdStr);
       if (matched) {
-        const query = parts.slice(1).join(' ');
-        matched.action(query);
-        return;
+        const query = parts.slice(1).join(' ').trim();
+        const isDirectSystemCmd = ['/bm', '/hist', '/ext', '/dl'].includes(matched.cmd);
+        if (isDirectSystemCmd || query) {
+          matched.action(query);
+          return;
+        } else {
+          // 仅有指令名无搜索词时，补全空格并聚焦，提示用户继续输入
+          mainInput.value = `${matched.cmd} `;
+          mainInput.focus();
+          const len = mainInput.value.length;
+          mainInput.setSelectionRange(len, len);
+          handleInputChange();
+          return;
+        }
       }
     }
 
