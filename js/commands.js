@@ -1,4 +1,4 @@
-// 斜杠妙招快捷指令库与执行逻辑
+// 快捷指令库与执行逻辑
 
 // 辅助函数：安全打开 Chrome 原生系统页面或目标网页
 function openChromeUrl(url) {

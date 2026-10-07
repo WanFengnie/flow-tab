@@ -86,7 +86,7 @@ function rgbToHex(r, g, b) {
   }).join('').toUpperCase();
 }
 
-// 专属大圆角无极调色器交互对象
+// 无极调色器
 const InteractiveColorPicker = {
   h: 20,
   s: 0.85,

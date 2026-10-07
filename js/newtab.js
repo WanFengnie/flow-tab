@@ -468,7 +468,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
 
-  // 5. 斜杠妙招面板渲染
+  // 5. 斜杠面板渲染
   function renderPaletteList() {
     paletteList.innerHTML = '';
     if (filteredCommands.length === 0) {
@@ -517,7 +517,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       query = parts.slice(1).join(' ').trim();
     }
 
-    // 针对系统工具类直达页面（无需参数，直接打开 Chrome 原生系统页）
+    // 针对系统工具类直达页面
     const isDirectSystemCmd = ['/bm', '/hist', '/ext', '/dl'].includes(cmdItem.cmd);
     if (isDirectSystemCmd) {
       hidePalette();
@@ -527,7 +527,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // 针对搜索/翻译类指令（如 /bili, /yt, /trans 等）：
     // 若已有搜索词，直接执行搜索；
-    // 若尚无搜索词（用户刚点击指令或按回车选择），将指令填入输入框并聚焦末尾，等待用户输入搜索词，避免空跳转
+    // 若尚无搜索词，将指令填入输入框并聚焦末尾，等待用户输入搜索词，避免空跳转
     if (query) {
       hidePalette();
       cmdItem.action(query);
@@ -549,7 +549,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
 
-    // 优先：如果正打开且有妙招命令选中
+    // 优先：如果正打开且有命令选中
     if (!slashPalette.classList.contains('hidden') && filteredCommands[selectedPaletteIndex]) {
       executeCommandItem(filteredCommands[selectedPaletteIndex]);
       return;
@@ -597,7 +597,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // 键盘快捷控制
   mainInput.addEventListener('keydown', (e) => {
-    // 妙招面板展开时的上下方向键与回车切换
+    // /面板展开时的上下方向键与回车切换
     if (!slashPalette.classList.contains('hidden') && filteredCommands.length > 0) {
       if (e.key === 'ArrowDown') {
         e.preventDefault();
@@ -661,7 +661,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   sendBtn.addEventListener('click', executeSearchOrAction);
 
-  // 全局快捷键：随时按 "/" 聚焦输入框并触发妙招；按 "Escape" 快捷收起开启的弹窗
+  // 全局快捷键
   document.addEventListener('keydown', (e) => {
     const isEditing = document.activeElement && ['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName);
 
@@ -830,7 +830,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  // 8. Bento 自定义常用快捷站点管理（默认为空）
+  // 8. Bento 自定义常用快捷站点管理
   let customShortcuts = await StorageService.get('custom_shortcuts', []);
 
   function renderBentoShortcuts() {
@@ -967,12 +967,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
       });
 
-      // 通用级联降级策略（无特例硬编码）
+      // 通用级联降级策略
       const img = el.querySelector('img');
       const fallback = el.querySelector('.bento-fallback-icon');
       if (img && fallback) {
         img.addEventListener('error', () => {
-          // 阶梯 1: 尝试 DuckDuckGo 全球通用高清 CDN
+          // 阶梯 1: 尝试高清 CDN
           if (domain && !img.dataset.stageDdg) {
             img.dataset.stageDdg = 'true';
             img.src = `https://icons.duckduckgo.com/ip3/${domain}.ico`;
