@@ -890,6 +890,13 @@ body {
   gap: 8px;
 }
 
+.bento-form-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
 .bento-form-input {
   width: 100%;
   padding: 7px 10px;
@@ -1033,14 +1040,26 @@ body {
   width: 100%;
 }
 
-.bento-item-delete {
+.bento-item-actions {
   position: absolute;
-  top: 4px;
-  right: 4px;
+  top: 2px;
+  right: 2px;
+  display: flex;
+  gap: 3px;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  z-index: 2;
+}
+
+.bento-app-item:hover .bento-item-actions {
+  opacity: 1;
+}
+
+.bento-item-btn {
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.45);
+  background: rgba(0, 0, 0, 0.55);
   color: #ffffff;
   border: none;
   font-size: 10px;
@@ -1049,17 +1068,24 @@ body {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  opacity: 0;
-  transition: opacity 0.15s ease, background 0.15s ease;
-  z-index: 2;
+  transition: background 0.15s ease, transform 0.1s ease;
 }
 
-.bento-app-item:hover .bento-item-delete {
-  opacity: 1;
+.bento-item-btn:hover {
+  transform: scale(1.1);
 }
 
-.bento-item-delete:hover {
+.bento-item-btn.edit:hover {
+  background: var(--accent-color);
+}
+
+.bento-item-btn.delete:hover {
   background: #f43f5e;
+}
+
+/* 兼容旧选择器 */
+.bento-item-delete {
+  display: none;
 }
 
 .bento-app-icon {
@@ -1090,6 +1116,15 @@ body {
   font-weight: 700;
   color: var(--accent-color);
   text-transform: uppercase;
+}
+
+.bento-custom-emoji {
+  font-size: 22px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
 }
 
 .bento-app-name {

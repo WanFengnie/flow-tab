@@ -18,8 +18,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   const bentoAddForm = document.getElementById('bentoAddForm');
   const shortcutNameInput = document.getElementById('shortcutNameInput');
   const shortcutUrlInput = document.getElementById('shortcutUrlInput');
+  const shortcutIconInput = document.getElementById('shortcutIconInput');
+  const bentoFormTitle = document.getElementById('bentoFormTitle');
   const bentoSaveBtn = document.getElementById('bentoSaveBtn');
   const bentoCancelBtn = document.getElementById('bentoCancelBtn');
+  let editingShortcutId = null;
 
   // 自定义搜索引擎 DOM 缓存与状态
   const customEnginesList = document.getElementById('customEnginesList');
@@ -852,25 +855,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     bentoGrid.classList.remove('is-empty');
 
-    function getKnownSiteIcon(targetUrl) {
-      let hostname = '';
-      try {
-        const u = targetUrl.startsWith('http://') || targetUrl.startsWith('https://') 
-          ? targetUrl 
-          : 'https://' + targetUrl;
-        hostname = new URL(u).hostname.toLowerCase().replace(/^www\./, '');
-      } catch (e) {
-        hostname = (targetUrl || '').toLowerCase();
-      }
-
-      // 针对 Chromium 本地 favicon 容易糊掉的 YouTube 提供正版官方矢量高清 SVG
-      if (hostname.includes('youtube.com') || hostname.includes('youtu.be')) {
-        return `<svg width="24" height="24" viewBox="0 0 24 24"><path fill="#FF0000" d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814z"/><polygon fill="#FFFFFF" points="9.545,15.568 15.818,12 9.545,8.432"/></svg>`;
-      }
-
-      return null;
-    }
-
     function getFaviconUrl(targetUrl) {
       if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getURL) {
         try {
@@ -903,16 +887,32 @@ document.addEventListener('DOMContentLoaded', async () => {
         domain = item.url.replace(/https?:\/\//, '').split('/')[0];
       }
       const firstChar = (item.name || domain || '?').charAt(0).toUpperCase();
-      const knownSvg = getKnownSiteIcon(item.url);
-      const faviconSrc = getFaviconUrl(item.url);
+      const customIcon = (item.icon || '').trim();
 
-      const iconContent = knownSvg ? knownSvg : `
-        <img src="${faviconSrc}" alt="${item.name}" draggable="false" />
-        <span class="bento-fallback-icon" style="display:none;">${firstChar}</span>
-      `;
+      let iconContent = '';
+      if (customIcon) {
+        const isEmojiOrText = !/^https?:\/\//i.test(customIcon) && !/^data:image\//i.test(customIcon) && !customIcon.includes('/');
+        if (isEmojiOrText) {
+          iconContent = `<span class="bento-custom-emoji">${customIcon}</span>`;
+        } else {
+          iconContent = `
+            <img src="${customIcon}" alt="${item.name}" draggable="false" />
+            <span class="bento-fallback-icon" style="display:none;">${firstChar}</span>
+          `;
+        }
+      } else {
+        const faviconSrc = getFaviconUrl(item.url);
+        iconContent = `
+          <img src="${faviconSrc}" alt="${item.name}" draggable="false" />
+          <span class="bento-fallback-icon" style="display:none;">${firstChar}</span>
+        `;
+      }
 
       el.innerHTML = `
-        <button type="button" class="bento-item-delete" title="删除" aria-label="删除">✕</button>
+        <div class="bento-item-actions">
+          <button type="button" class="bento-item-btn edit" title="编辑" aria-label="编辑">✎</button>
+          <button type="button" class="bento-item-btn delete" title="删除" aria-label="删除">✕</button>
+        </div>
         <a href="${item.url}" target="_blank" class="bento-app-link" draggable="false">
           <div class="bento-app-icon">
             ${iconContent}
@@ -923,7 +923,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       // 拖拽排序事件监听
       el.addEventListener('dragstart', (e) => {
-        if (e.target.closest('.bento-item-delete')) {
+        if (e.target.closest('.bento-item-actions')) {
           e.preventDefault();
           return;
         }
@@ -967,40 +967,76 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
       });
 
+      // 通用级联降级策略（无特例硬编码）
       const img = el.querySelector('img');
       const fallback = el.querySelector('.bento-fallback-icon');
       if (img && fallback) {
         img.addEventListener('error', () => {
-          if (domain && !img.dataset.triedDomainIco) {
-            img.dataset.triedDomainIco = 'true';
+          // 阶梯 1: 尝试 DuckDuckGo 全球通用高清 CDN
+          if (domain && !img.dataset.stageDdg) {
+            img.dataset.stageDdg = 'true';
+            img.src = `https://icons.duckduckgo.com/ip3/${domain}.ico`;
+            return;
+          }
+          // 阶梯 2: 尝试目标站点根目录原装 favicon.ico
+          if (domain && !img.dataset.stageRootIco) {
+            img.dataset.stageRootIco = 'true';
             img.src = `https://${domain}/favicon.ico`;
             return;
           }
+          // 最终兜底: 显示首字母徽章
           img.style.display = 'none';
           fallback.style.display = 'flex';
         });
       }
 
-      const delBtn = el.querySelector('.bento-item-delete');
-      delBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        removeShortcut(item.id);
-      });
+      // 编辑与删除按钮事件
+      const editBtn = el.querySelector('.bento-item-btn.edit');
+      if (editBtn) {
+        editBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          showBentoForm(item);
+        });
+      }
+
+      const delBtn = el.querySelector('.bento-item-btn.delete');
+      if (delBtn) {
+        delBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          removeShortcut(item.id);
+        });
+      }
 
       bentoGrid.appendChild(el);
     });
   }
 
-  function showBentoForm() {
+  function showBentoForm(itemToEdit = null) {
+    if (itemToEdit) {
+      editingShortcutId = itemToEdit.id;
+      if (bentoFormTitle) bentoFormTitle.textContent = '编辑常用站点';
+      shortcutNameInput.value = itemToEdit.name || '';
+      shortcutUrlInput.value = itemToEdit.url || '';
+      if (shortcutIconInput) shortcutIconInput.value = itemToEdit.icon || '';
+    } else {
+      editingShortcutId = null;
+      if (bentoFormTitle) bentoFormTitle.textContent = '添加常用站点';
+      shortcutNameInput.value = '';
+      shortcutUrlInput.value = '';
+      if (shortcutIconInput) shortcutIconInput.value = '';
+    }
     bentoAddForm.classList.remove('hidden');
     shortcutNameInput.focus();
   }
 
   function hideBentoForm() {
+    editingShortcutId = null;
     bentoAddForm.classList.add('hidden');
     shortcutNameInput.value = '';
     shortcutUrlInput.value = '';
+    if (shortcutIconInput) shortcutIconInput.value = '';
   }
 
   async function saveShortcut() {
@@ -1022,13 +1058,25 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     }
 
-    const newShortcut = {
-      id: 'sc_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
-      name: name,
-      url: rawUrl
-    };
+    const iconVal = shortcutIconInput ? shortcutIconInput.value.trim() : '';
 
-    customShortcuts.push(newShortcut);
+    if (editingShortcutId) {
+      const idx = customShortcuts.findIndex(s => s.id === editingShortcutId);
+      if (idx !== -1) {
+        customShortcuts[idx].name = name;
+        customShortcuts[idx].url = rawUrl;
+        customShortcuts[idx].icon = iconVal;
+      }
+    } else {
+      const newShortcut = {
+        id: 'sc_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+        name: name,
+        url: rawUrl,
+        icon: iconVal
+      };
+      customShortcuts.push(newShortcut);
+    }
+
     await StorageService.set('custom_shortcuts', customShortcuts);
     renderBentoShortcuts();
     hideBentoForm();
@@ -1078,6 +1126,14 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (e.key === 'Enter') {
         e.preventDefault();
         shortcutUrlInput.focus();
+      }
+    });
+  }
+  if (shortcutIconInput) {
+    shortcutIconInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        saveShortcut();
       }
     });
   }

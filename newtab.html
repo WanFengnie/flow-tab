@@ -194,10 +194,12 @@
           <button class="bento-add-btn" id="bentoAddToggleBtn" title="添加常用站点">+ 添加</button>
         </div>
 
-        <!-- 添加表单区域 -->
+        <!-- 添加/编辑表单区域 -->
         <div class="bento-add-form hidden" id="bentoAddForm">
-          <input type="text" id="shortcutNameInput" class="bento-form-input" placeholder="站点名称" autocomplete="off" />
-          <input type="text" id="shortcutUrlInput" class="bento-form-input" placeholder="网址" autocomplete="off" />
+          <div class="bento-form-title" id="bentoFormTitle">添加常用站点</div>
+          <input type="text" id="shortcutNameInput" class="bento-form-input" placeholder="站点名称 (如 YouTube)" autocomplete="off" />
+          <input type="text" id="shortcutUrlInput" class="bento-form-input" placeholder="网址 (如 https://...)" autocomplete="off" />
+          <input type="text" id="shortcutIconInput" class="bento-form-input" placeholder="自定义图标链接 (可选，支持图片URL/Emoji)" autocomplete="off" />
           <div class="bento-form-actions">
             <button type="button" class="bento-btn-secondary" id="bentoCancelBtn">取消</button>
             <button type="button" class="bento-btn-primary" id="bentoSaveBtn">保存</button>
